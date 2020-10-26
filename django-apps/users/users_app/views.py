@@ -1,3 +1,5 @@
+"""user model views functions"""
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (
     IsAdminUser, 
@@ -15,6 +17,7 @@ User = get_user_model()
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser])
 def get_all_users(request):
+    """ get all users"""
     users = User.objects.all()
     serializers_users = UserSerializer(users, many=True)
     return Response({
@@ -25,9 +28,26 @@ def get_all_users(request):
 
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser, IsAuthenticatedOrReadOnly])
-def get_user(request):
+def get_me(request):
     user = User.objects.filter(id=request.user.id)
     serializers_user = UserSerializer(user, many=True)
+    return Response({
+        "data": {
+            "user": serializers_user.data[0]
+        }
+    })
+
+@api_view(http_method_names=['GET'])
+@permission_classes([])
+def get_user(request, id=1):
+    user = User.objects.filter(id=id)
+    serializers_user = UserSerializer(user, many=True)
+    if not serializers_user.data:
+        return Response({
+            "data": {
+                "user": {}
+            }
+        })
     return Response({
         "data": {
             "user": serializers_user.data[0]
