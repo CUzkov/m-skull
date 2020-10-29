@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Moment
 
-class MomentSerializer(serializers.Serializer):
+
+class MomentSerializer(serializers.ModelSerializer):
+    """moments serializer class"""
 
     class Meta:
         model = Moment

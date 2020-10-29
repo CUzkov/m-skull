@@ -2,17 +2,19 @@
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (
-    IsAdminUser, 
+    IsAdminUser,
     IsAuthenticatedOrReadOnly,
-    IsAuthenticated
 )
 from django.contrib.auth import get_user_model
 from users_app.serializers import UserSerializer
 from rest_framework.response import Response
 import json
 from json import JSONDecodeError
+import requests
+from .apis import subscribers_create_user
 
 User = get_user_model()
+
 
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser])
@@ -26,6 +28,7 @@ def get_all_users(request):
         }
     })
 
+
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser, IsAuthenticatedOrReadOnly])
 def get_me(request):
@@ -36,6 +39,7 @@ def get_me(request):
             "user": serializers_user.data[0]
         }
     })
+
 
 @api_view(http_method_names=['GET'])
 @permission_classes([])
@@ -54,32 +58,50 @@ def get_user(request, id=1):
         }
     })
 
+
 @api_view(http_method_names=['POST'])
 @permission_classes([])
 def create_user(request):
     try:
         data = json.loads(request.body)
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return Response({
             "response": "bad json format"
         })
     serializes_user = UserSerializer(data=data)
-    if serializes_user.is_valid(raise_exception=True):
-        user = serializes_user.save()
+    response = requests.post(
+        url=subscribers_create_user,
+        json={
+            "user": {
+                "id": User.objects.last().id + 1
+            }
+        }
+    )
+    print(json.loads(response.text)['response'])
+    if (
+        json.loads(response.text)['response'] == 'success' and
+        serializes_user.is_valid(raise_exception=True)
+    ):
+        serializes_user.save()
         return Response({
             "response": "Success create user"
         })
+    if response['response'] != 'success':
+        response_str = 'server error, try again'
+    else:
+        response_str = 'bad data'
     return Response({
-        "response": "bad data",
+        "response": response_str,
         "needs": serializes_user.errors
     })
+
 
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def update_user(request):
     try:
         data = json.loads(request.body)
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return Response({
             "response": "bad json format"
         })
@@ -92,5 +114,5 @@ def update_user(request):
         })
     return Response({
         "response": "bad data",
-        "needs": serializes_user.errors
+        "needs": serialisers_user.errors
     })

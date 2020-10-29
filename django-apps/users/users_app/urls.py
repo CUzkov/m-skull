@@ -1,4 +1,3 @@
-from django.conf.urls import url
 from .views import (
     get_all_users,
     get_user,
@@ -6,7 +5,7 @@ from .views import (
     create_user,
     update_user
 )
-from django.urls import path, re_path
+from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
