@@ -1,9 +1,9 @@
 from django.db import models
 
 
-class Subscriber(models.Model):
+class Friend(models.Model):
 
-    subscribers = models.FileField(upload_to='')
+    friends_file = models.FileField(upload_to='')
     user_id = models.PositiveIntegerField(unique=True)
 
     def __str__(self):

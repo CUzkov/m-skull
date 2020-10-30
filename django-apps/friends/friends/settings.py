@@ -1,4 +1,4 @@
-"""Django settings for subscribers project"""
+"""Django settings for friends project"""
 
 from pathlib import Path
 
@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'subscribers_app'
+    'friends_app'
 ]
 
 MIDDLEWARE = [
@@ -43,7 +43,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'subscribers.urls'
+ROOT_URLCONF = 'friends.urls'
 
 TEMPLATES = [
     {
@@ -61,7 +61,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'subscribers.wsgi.application'
+WSGI_APPLICATION = 'friends.wsgi.application'
 
 
 # Database
@@ -112,4 +112,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/subscribers/'
+MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/friends/'

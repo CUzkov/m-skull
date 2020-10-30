@@ -77,16 +77,16 @@ def create_user(request):
             }
         }
     )
-    print(json.loads(response.text)['response'])
+    print(response.text)
     if (
-        json.loads(response.text)['response'] == 'success' and
-        serializes_user.is_valid(raise_exception=True)
+        serializes_user.is_valid(raise_exception=True) and
+        json.loads(response.text)['response'] == 'success'
     ):
         serializes_user.save()
         return Response({
             "response": "Success create user"
         })
-    if response['response'] != 'success':
+    if json.loads(response.text)['response'] != 'success':
         response_str = 'server error, try again'
     else:
         response_str = 'bad data'
