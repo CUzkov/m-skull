@@ -143,4 +143,6 @@ DJOSER = {
     }
 }
 
-APPEND_SLASH=False
+MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/users/'
+
+APPEND_SLASH = False

@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from .models import Moment, Image
 from .serializers import MomentSerializer
 from datetime import datetime
-from .api import get_friends
+from .api import get_friends, get_is_user_exists_url
 import requests
 import json
 from json import JSONDecodeError
 from .utils import add_file_to_model
+import subprocess
+from django.conf import settings
 
 
 @api_view(http_method_names=['GET'])
@@ -83,7 +85,68 @@ def get_user_tape(request, id):
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def add_like_by_id(request):
-    
-    return Response({
+    data = json.loads(request.body)
+    moment = Moment.objects.filter(id=data.get('moment_id', 0))
+    response = requests.get(get_is_user_exists_url(data.get("user_id", 0)))
+    if not moment or ('not' in response.text):
+        return Response({
+            "response": "not found moment or user"
+        })
+    check = ''
+    try:
+        check = subprocess.check_output([
+            'grep',
+            f'i{data["user_id"]};',
+            settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt'
+        ]).decode('utf-8')
+    except Exception:
+        pass
+    if not check:
+        with open(settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt', 'a') as f:
+            f.write(f'i{data["user_id"]};\n')
+        moment[0].likes = moment[0].likes + 1
+        moment[0].save()
+        return Response({
+            "response": "success liked"
+        })
+    else:
+        return Response({
+            "response": "already liked"
+        })
 
-    })
+
+@api_view(http_method_names=['PUT'])
+@permission_classes([])
+def del_like_by_id(request):
+    data = json.loads(request.body)
+    moment = Moment.objects.filter(id=data.get('moment_id', 0))
+    response = requests.get(get_is_user_exists_url(data.get("user_id", 0)))
+    if not moment or ('not' in response.text):
+        return Response({
+            "response": "not found moment or user"
+        })
+    check = ''
+    try:
+        check = subprocess.check_output([
+            'grep',
+            f'i{data["user_id"]};',
+            settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt'
+        ]).decode('utf-8')
+    except Exception:
+        pass
+    if check:
+        subprocess.call([
+            'sed',
+            '-i',
+            f'/i{data["user_id"]};/d',
+            settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt'
+        ])
+        moment[0].likes = moment[0].likes - 1
+        moment[0].save()
+        return Response({
+            "response": "success disliked"
+        })
+    else:
+        return Response({
+            "response": "already disliked"
+        })

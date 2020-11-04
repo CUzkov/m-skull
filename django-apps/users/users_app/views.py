@@ -12,6 +12,9 @@ import json
 from json import JSONDecodeError
 import requests
 from .apis import subscribers_create_user
+from .utils import add_file_to_model
+import subprocess
+from django.conf import settings
 
 User = get_user_model()
 
@@ -71,6 +74,10 @@ def create_user(request):
         return Response({
             "response": "bad json format"
         })
+    data.update({
+        "likes": 0,
+        "dislikes": 0
+    })
     serializes_user = UserSerializer(data=data)
     response = requests.post(
         url=subscribers_create_user,
@@ -84,7 +91,9 @@ def create_user(request):
         serializes_user.is_valid(raise_exception=True) and
         json.loads(response.text)['response'] == 'success'
     ):
-        serializes_user.save()
+        user = serializes_user.save()
+        add_file_to_model('likes', user)
+        add_file_to_model('dislikes', user)
         return Response({
             "response": "Success create user"
         })
@@ -117,4 +126,127 @@ def update_user(request):
     return Response({
         "response": "bad data",
         "needs": serialisers_user.errors
+    })
+
+
+@api_view(http_method_names=['GET'])
+@permission_classes([])
+def is_user_exists(request, id):
+    user = User.objects.filter(id=id)
+    if user:
+        return Response({
+            "response": "exists"
+        })
+    else:
+        return Response({
+            "response": "not exists"
+        })
+
+
+@api_view(http_method_names=['PUT'])
+@permission_classes([])
+def like_by_id(request):
+    data = json.loads(request.body)
+    user_purpose = User.objects.filter(id=data.get('user_purpose_id', 0))
+    user_src = User.objects.filter(id=data.get('user_src_id', 0))
+    if not user_purpose or not user_src:
+        return Response({
+            "response" "User not found or no change type"
+        })
+    check_like = ''
+    check_dislike = ''
+    try:
+        check_like = subprocess.check_output([
+            'grep',
+            f'i{user_src[0].id};',
+            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt'
+        ]).decode('utf-8')
+    except Exception:
+        pass
+    try:
+        check_dislike = subprocess.check_output([
+            'grep',
+            f'i{user_src[0].id};',
+            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt'
+        ]).decode('utf-8')
+    except Exception:
+        pass
+    print(check_dislike)
+    print(check_like)
+    if check_like:
+        return Response({
+            "response": "already like"
+        })
+    else:
+        with open(
+            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt',
+            'a'
+        ) as f:
+            f.write(f'i{user_src[0].id};\n')
+        user_purpose[0].likes = user_purpose[0].likes + 1
+    if check_dislike:
+        print('innn')
+        subprocess.call([
+            'sed',
+            '-i',
+            f'/i{user_src[0].id};/d',
+            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt',
+        ])
+        user_purpose[0].dislikes = user_purpose[0].dislikes - 1
+    user_purpose[0].save()
+    return Response({
+        "response": "success like"
+    })
+
+
+@api_view(http_method_names=['PUT'])
+@permission_classes([])
+def dislike_by_id(request):
+    data = json.loads(request.body)
+    user_purpose = User.objects.filter(id=data.get('user_purpose_id', 0))
+    user_src = User.objects.filter(id=data.get('user_src_id', 0))
+    if not user_purpose or not user_src:
+        return Response({
+            "response" "User not found or no change type"
+        })
+    check_like = ''
+    check_dislike = ''
+    try:
+        check_like = subprocess.check_output([
+            'grep',
+            f'i{user_src[0].id};',
+            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt'
+        ]).decode('utf-8')
+    except Exception:
+        pass
+    try:
+        check_dislike = subprocess.check_output([
+            'grep',
+            f'i{user_src[0].id};',
+            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt'
+        ]).decode('utf-8')
+    except Exception:
+        pass
+    if check_dislike:
+        return Response({
+            "response": "already dislike"
+        })
+    else:
+        with open(
+            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt',
+            'a'
+        ) as f:
+            f.write(f'i{user_src[0].id};\n')
+        user_purpose[0].dislikes = user_purpose[0].dislikes + 1
+    if check_like:
+        subprocess.call([
+            'sed',
+            '-i',
+            f'/i{user_src[0].id};/d',
+            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt',
+        ])
+        user_purpose[0].likes = user_purpose[0].likes - 1
+    user_purpose[0].save()
+    return Response({
+        "response": "success dislike"
     })

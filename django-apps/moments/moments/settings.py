@@ -125,7 +125,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/moments/'
 
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 45,
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.LimitOffsetPagination'
 }
