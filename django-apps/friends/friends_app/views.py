@@ -7,9 +7,7 @@ from .models import Friend
 from django.conf import settings
 import json
 from django.db.utils import IntegrityError
-from .utils import (
-    get_relation
-)
+from .utils import get_relation
 import subprocess
 
 
@@ -23,7 +21,7 @@ def add_user(request):
         '.txt'
     )
     with open(path_to_file, 'w+') as f:
-        f.write("")
+        f.write('')
     try:
         friends_list = Friend.objects.create(
             user_id=request_body['user']['id']
@@ -41,7 +39,7 @@ def add_user(request):
 
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
-def update_subscription(request, id=1):
+def update_friends(request, id=1):
     request_body = json.loads(request.body)
     friends_list_user = Friend.objects.get(user_id=id)
     friends_list_purpose = Friend.objects.get(
@@ -87,15 +85,42 @@ def update_subscription(request, id=1):
             subprocess.call([
                 'sed',
                 '-i',
-                f's/.*i{purpose_id}=.*/i{purpose_id}={relation[0]}/',
+                f's/.*i{purpose_id}=.*/i{purpose_id}={relation[0]}\n/',
                 friends_list_user.friends_file.path
             ])
             subprocess.call([
                 "sed",
                 '-i',
-                f's/.*i{id}=.*/i{id}={relation[1]}/',
+                f's/.*i{id}=.*/i{id}={relation[1]}\n/',
                 friends_list_purpose.friends_file.path
             ])
     return Response({
         "response": "success"
+    })
+
+
+@api_view(['GET'])
+@permission_classes([])
+def get_user_friends(request, id):
+    try:
+        friends = Friend.objects.get(id=id)
+    except Exception:
+        return Response({
+            "response": "User not found"
+        })
+    data = subprocess.check_output([
+        'grep',
+        r'11\|01',
+        friends.friends_file.path
+    ]).decode('utf-8')
+    data_dict = {
+        'users': []
+    }
+    data = data.split('\n')
+    for s in data:
+        s_buff = s.split('=')
+        if s_buff:
+            data_dict['users'].extend(s_buff[0][1::])
+    return Response({
+        "response": data_dict
     })

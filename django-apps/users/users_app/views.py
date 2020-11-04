@@ -32,6 +32,7 @@ def get_all_users(request):
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser, IsAuthenticatedOrReadOnly])
 def get_me(request):
+    """get user that auth"""
     user = User.objects.filter(id=request.user.id)
     serializers_user = UserSerializer(user, many=True)
     return Response({
@@ -44,6 +45,7 @@ def get_me(request):
 @api_view(http_method_names=['GET'])
 @permission_classes([])
 def get_user(request, id=1):
+    """get user by qs number"""
     user = User.objects.filter(id=id)
     serializers_user = UserSerializer(user, many=True)
     if not serializers_user.data:
@@ -62,6 +64,7 @@ def get_user(request, id=1):
 @api_view(http_method_names=['POST'])
 @permission_classes([])
 def create_user(request):
+    """create user"""
     try:
         data = json.loads(request.body)
     except JSONDecodeError:
@@ -77,7 +80,6 @@ def create_user(request):
             }
         }
     )
-    print(response.text)
     if (
         serializes_user.is_valid(raise_exception=True) and
         json.loads(response.text)['response'] == 'success'
