@@ -9,6 +9,7 @@ import json
 from django.db.utils import IntegrityError
 from .utils import get_relation
 import subprocess
+from datetime import datetime
 
 
 @api_view(http_method_names=['POST'])
@@ -46,7 +47,6 @@ def update_friends(request, id=1):
         user_id=request_body["user"]["id"]
     )
     purpose_id = request_body["user"]["id"]
-
     if not friends_list_user or not friends_list_purpose:
         return Response({
             "response": "no such users"
@@ -63,9 +63,9 @@ def update_friends(request, id=1):
 
     if not data:
         with open(friends_list_user.friends_file.path, 'a') as f:
-            f.write(f'i{request_body["user"]["id"]}=01\n')
+            f.write(f'i{request_body["user"]["id"]}=01={str(datetime.now())}\n')
         with open(friends_list_purpose.friends_file.path, 'a') as f:
-            f.write(f'i{id}=10\n')
+            f.write(f'i{id}=10={str(datetime.now())}\n')
     else:
         relation = get_relation(data, request_body["user"]["status"])
         if relation[0] == '00':
@@ -85,13 +85,13 @@ def update_friends(request, id=1):
             subprocess.call([
                 'sed',
                 '-i',
-                f's/.*i{purpose_id}=.*/i{purpose_id}={relation[0]}\n/',
+                f's/.*i{purpose_id}=.*/i{purpose_id}={relation[0]}={str(datetime.now())}' + r'\n/',
                 friends_list_user.friends_file.path
             ])
             subprocess.call([
                 "sed",
                 '-i',
-                f's/.*i{id}=.*/i{id}={relation[1]}\n/',
+                f's/.*i{id}=.*/i{id}={relation[1]}={str(datetime.now())}' + r'\n/',
                 friends_list_purpose.friends_file.path
             ])
     return Response({

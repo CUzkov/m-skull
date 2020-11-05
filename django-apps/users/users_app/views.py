@@ -171,8 +171,6 @@ def like_by_id(request):
         ]).decode('utf-8')
     except Exception:
         pass
-    print(check_dislike)
-    print(check_like)
     if check_like:
         return Response({
             "response": "already like"
@@ -185,7 +183,6 @@ def like_by_id(request):
             f.write(f'i{user_src[0].id};\n')
         user_purpose[0].likes = user_purpose[0].likes + 1
     if check_dislike:
-        print('innn')
         subprocess.call([
             'sed',
             '-i',
