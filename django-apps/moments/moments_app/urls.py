@@ -4,7 +4,8 @@ from .views import (
     create_moment,
     get_user_tape,
     add_like_by_id,
-    del_like_by_id
+    del_like_by_id,
+    add_comment
 )
 from django.urls import path
 
@@ -14,5 +15,6 @@ urlpatterns = [
     path('moments/like/del/', del_like_by_id, name='del_like_by_id'),
     path('moments/create/', create_moment, name='create_posts'),
     path('moments/user/<int:id>/', get_user_moments, name='user_posts'),
-    path('moments/user/tape/<int:id>/', get_user_tape, name='get_user_tape')
+    path('moments/user/tape/<int:id>/', get_user_tape, name='get_user_tape'),
+    path('moments/<int:id>/comment/', add_comment, name='add_comment')
 ]

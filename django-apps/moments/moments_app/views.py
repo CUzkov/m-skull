@@ -106,7 +106,12 @@ def get_user_tape(request, id):
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def add_like_by_id(request):
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
+    except JSONDecodeError:
+        return Response({
+            "response": "bad json"
+        })
     moment = Moment.objects.filter(id=data.get('moment_id', 0))
     response = requests.get(get_is_user_exists_url(data.get("user_id", 0)))
     if not moment or ('not' in response.text):
@@ -139,7 +144,12 @@ def add_like_by_id(request):
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def del_like_by_id(request):
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
+    except JSONDecodeError:
+        return Response({
+            "response": "bad json"
+        })
     moment = Moment.objects.filter(id=data.get('moment_id', 0))
     response = requests.get(get_is_user_exists_url(data.get("user_id", 0)))
     if not moment or ('not' in response.text):
@@ -170,4 +180,21 @@ def del_like_by_id(request):
     else:
         return Response({
             "response": "already disliked"
+        })
+
+
+@api_view(http_method_names=['PUT'])
+@permission_classes([])
+def add_comment(request, id):
+    try:
+        data = json.loads(request.body)
+    except JSONDecodeError:
+        return Response({
+            "response": "bad json"
+        })
+    moment = Moment.objects.filter(id=data.get('moment_id', 0))
+    response = requests.get(get_is_user_exists_url(data.get("user_id", 0)))
+    if not moment or ('not' in response.text):
+        return Response({
+            "response": "not found moment or user"
         })
