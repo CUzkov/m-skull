@@ -194,7 +194,15 @@ def add_comment(request, id):
         })
     moment = Moment.objects.filter(id=data.get('moment_id', 0))
     response = requests.get(get_is_user_exists_url(data.get("user_id", 0)))
-    if not moment or ('not' in response.text):
+    comment = data.get('comment')
+    if not moment or ('not' in response.text) or not comment:
         return Response({
             "response": "not found moment or user"
         })
+    with open(settings.MEDIA_ROOT + f'comments/{moment[0].id}.txt') as f:
+        f.write(str(comment).replace('\n', ' ').replace('\t', ' ') + '\n')
+        f.write(str(id) + '\n')
+        f.write(str(datetime.now()) + '\n')
+    return Response({
+        "response": "success"
+    })
