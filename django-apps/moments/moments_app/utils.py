@@ -14,4 +14,8 @@ def add_file_to_model(field, obj):
         obj.liked_users_id_file.name = str(obj.id) + '.txt'
     if field == 'comments':
         obj.comments_file.name = str(obj.id) + '.txt'
+    if field == 'tags_id':
+        obj.tags_id_file.name = str(obj.id) + '.txt'
+    if field == 'moments_id':
+        obj.moments_id_file.name = str(obj.id) + '.txt'
     obj.save()

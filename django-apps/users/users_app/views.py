@@ -68,35 +68,37 @@ def get_user(request, id=1):
 @permission_classes([])
 def create_user(request):
     """create user"""
-    try:
-        data = json.loads(request.body)
-    except JSONDecodeError:
-        return Response({
-            "response": "bad json format"
-        })
+    data = dict(request.POST)
+    for entry in data:
+        data[entry] = data[entry][0]
     data.update({
         "likes": 0,
-        "dislikes": 0
+        "dislikes": 0,
+        "profile_image": dict(request.FILES).get('photo', None)
     })
+    if data["profile_image"] is not None:
+        data["profile_image"] = data["profile_image"][0]
     serializes_user = UserSerializer(data=data)
-    response = requests.post(
-        url=subscribers_create_user,
-        json={
-            "user": {
-                "id": User.objects.last().id + 1
+    if (serializes_user.is_valid(raise_exception=True)):
+        response = requests.post(
+            url=subscribers_create_user,
+            json={
+                "user": {
+                    "id": User.objects.last().id + 1
+                }
             }
-        }
-    )
-    if (
-        serializes_user.is_valid(raise_exception=True) and
-        json.loads(response.text)['response'] == 'success'
-    ):
-        user = serializes_user.save()
-        add_file_to_model('likes', user)
-        add_file_to_model('dislikes', user)
-        return Response({
-            "response": "Success create user"
-        })
+        )
+        if json.loads(response.text)['response'] == 'success':
+            user = serializes_user.save()
+            add_file_to_model('likes', user)
+            add_file_to_model('dislikes', user)
+            return Response({
+                "response": "Success create user"
+            })
+        else:
+            return Response({
+                "response": "friend service error, try again"
+            })
     if json.loads(response.text)['response'] != 'success':
         response_str = 'server error, try again'
     else:
@@ -110,6 +112,7 @@ def create_user(request):
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def update_user(request):
+    """update user"""
     try:
         data = json.loads(request.body)
     except JSONDecodeError:
@@ -132,6 +135,7 @@ def update_user(request):
 @api_view(http_method_names=['GET'])
 @permission_classes([])
 def is_user_exists(request, id):
+    """check user is exists"""
     user = User.objects.filter(id=id)
     if user:
         return Response({
@@ -146,6 +150,7 @@ def is_user_exists(request, id):
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def like_by_id(request):
+    """add like to user by user"""
     data = json.loads(request.body)
     user_purpose = User.objects.filter(id=data.get('user_purpose_id', 0))
     user_src = User.objects.filter(id=data.get('user_src_id', 0))
@@ -199,6 +204,7 @@ def like_by_id(request):
 @api_view(http_method_names=['PUT'])
 @permission_classes([])
 def dislike_by_id(request):
+    """add dislike to user by user"""
     data = json.loads(request.body)
     user_purpose = User.objects.filter(id=data.get('user_purpose_id', 0))
     user_src = User.objects.filter(id=data.get('user_src_id', 0))

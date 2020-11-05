@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from .models import Moment, Image
+from .models import Moment, Image, Tag
 from .serializers import MomentSerializer
 from datetime import datetime
 from .api import get_friends, get_is_user_exists_url
@@ -43,8 +43,12 @@ def create_moment(request):
         'creation_date': datetime.today(),
         'date_of_update': datetime.today()
     })
+    data_tags = []
     if data.get('likes'):
-        data.__delattr__('likes')
+        del data['likes']
+    if data.get('tags'):
+        data_tags = data.get('tags')
+        del data['tags']
     serializer_moment = MomentSerializer(data=data)
     if (serializer_moment.is_valid(raise_exception=True)):
         moment = serializer_moment.save()
@@ -56,6 +60,23 @@ def create_moment(request):
             )
         add_file_to_model('comments', moment)
         add_file_to_model('likes', moment)
+        add_file_to_model('tags_id', moment)
+        data_tags = set(data_tags.split(' '))
+        for tag in data_tags:
+            if not Tag.objects.filter(title=tag):
+                tag_obj = Tag.objects.create(title=tag)
+                add_file_to_model('moments_id', tag_obj)
+            tag_obj = Tag.objects.filter(title=tag)[0]
+            with open(
+                settings.MEDIA_ROOT + f'moments_id/{tag_obj.id}.txt',
+                'a'
+            ) as f:
+                f.write(str(moment.id) + '\n')
+            with open(
+                settings.MEDIA_ROOT + f'tags_id/{moment.id}.txt',
+                'a'
+            ) as f:
+                f.write(f'{tag_obj.id}={tag_obj.title}\n')
         return Response({
             "response": "Success create moment"
         })

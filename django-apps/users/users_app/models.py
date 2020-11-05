@@ -6,7 +6,11 @@ class User(AbstractUser):
     """extend user model"""
 
     birthday = models.DateField(null=True, blank=True)
-    profile_image = models.ImageField(null=True, blank=True)
+    profile_image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to='images/'
+    )
     status = models.CharField(max_length=20, default='')
     likes = models.PositiveIntegerField(default=0)
     likes_file_user_id_file = models.FileField(upload_to='likes/', blank=True)

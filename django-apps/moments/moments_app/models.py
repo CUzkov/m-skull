@@ -12,7 +12,7 @@ class Moment(models.Model):
     likes = models.PositiveIntegerField(default=0)
     comments_file = models.FileField(upload_to='comments/', blank=True)
     liked_users_id_file = models.FileField(upload_to='likes/', blank=True)
-    # tags
+    tags_id_file = models.FileField(upload_to='tags_id/', blank=True)
 
     def __str__(self):
         return str(self.title)
@@ -29,3 +29,10 @@ class Image(models.Model):
 
     def __str__(self):
         return str(self.image_name)
+
+
+class Tag(models.Model):
+    """tag model class"""
+
+    title = models.TextField()
+    moments_id_file = models.FileField(upload_to='moments_id/', blank=True)
