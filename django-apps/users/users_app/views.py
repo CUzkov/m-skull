@@ -12,9 +12,6 @@ import json
 from json import JSONDecodeError
 import requests
 from .apis import subscribers_create_user
-from .utils import add_file_to_model
-import subprocess
-from django.conf import settings
 
 User = get_user_model()
 
@@ -89,9 +86,7 @@ def create_user(request):
             }
         )
         if json.loads(response.text)['response'] == 'success':
-            user = serializes_user.save()
-            add_file_to_model('likes', user)
-            add_file_to_model('dislikes', user)
+            serializes_user.save()
             return Response({
                 "response": "Success create user"
             })
@@ -157,45 +152,32 @@ def like_by_id(request):
     if not user_purpose or not user_src:
         return Response({
             "response" "User not found or no change type"
-        })
-    check_like = ''
-    check_dislike = ''
-    try:
-        check_like = subprocess.check_output([
-            'grep',
-            f'i{user_src[0].id};',
-            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt'
-        ]).decode('utf-8')
-    except Exception:
-        pass
-    try:
-        check_dislike = subprocess.check_output([
-            'grep',
-            f'i{user_src[0].id};',
-            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt'
-        ]).decode('utf-8')
-    except Exception:
-        pass
+        }, status=400)
+    user_purpose = user_purpose[0]
+    user_src = user_src[0]
+    if str(f'id{user_src.id}') in user_purpose.likes_user_id:
+        check_like = True
+    else:
+        check_like = False
+    if str(f'id{user_src.id}') in user_purpose.dislikes_user_id:
+        check_dislike = True
+    else:
+        check_dislike = False
     if check_like:
         return Response({
             "response": "already like"
         })
     else:
-        with open(
-            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt',
-            'a'
-        ) as f:
-            f.write(f'i{user_src[0].id};\n')
-        user_purpose[0].likes = user_purpose[0].likes + 1
+        user_purpose.likes_user_id = (
+            str(user_purpose.likes_user_id) + str(f'\nid{user_src.id}')
+        )
+        user_purpose.likes = user_purpose.likes + 1
     if check_dislike:
-        subprocess.call([
-            'sed',
-            '-i',
-            f'/i{user_src[0].id};/d',
-            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt',
-        ])
-        user_purpose[0].dislikes = user_purpose[0].dislikes - 1
-    user_purpose[0].save()
+        user_purpose.dislikes_user_id = (
+            user_purpose.dislikes_user_id.replace(f'id{user_src.id}', '')
+        )
+        user_purpose.dislikes = user_purpose.dislikes - 1
+    user_purpose.save()
     return Response({
         "response": "success like"
     })
@@ -212,42 +194,29 @@ def dislike_by_id(request):
         return Response({
             "response" "User not found or no change type"
         })
-    check_like = ''
-    check_dislike = ''
-    try:
-        check_like = subprocess.check_output([
-            'grep',
-            f'i{user_src[0].id};',
-            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt'
-        ]).decode('utf-8')
-    except Exception:
-        pass
-    try:
-        check_dislike = subprocess.check_output([
-            'grep',
-            f'i{user_src[0].id};',
-            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt'
-        ]).decode('utf-8')
-    except Exception:
-        pass
+    user_purpose = user_purpose[0]
+    user_src = user_src[0]
+    if str(f'id{user_src.id}') in user_purpose.likes_user_id:
+        check_like = True
+    else:
+        check_like = False
+    if str(f'id{user_src.id}') in user_purpose.dislikes_user_id:
+        check_dislike = True
+    else:
+        check_dislike = False
     if check_dislike:
         return Response({
             "response": "already dislike"
         })
     else:
-        with open(
-            settings.MEDIA_ROOT + f'dislikes/{user_purpose[0].id}.txt',
-            'a'
-        ) as f:
-            f.write(f'i{user_src[0].id};\n')
+        user_purpose.dislikes_user_id = (
+            str(user_purpose.dislikes_user_id) + str(f'\nid{user_src.id}')
+        )
         user_purpose[0].dislikes = user_purpose[0].dislikes + 1
     if check_like:
-        subprocess.call([
-            'sed',
-            '-i',
-            f'/i{user_src[0].id};/d',
-            settings.MEDIA_ROOT + f'likes/{user_purpose[0].id}.txt',
-        ])
+        user_purpose.likes_user_id = (
+            user_purpose.likes_user_id.replace(f'id{user_src.id}', '')
+        )
         user_purpose[0].likes = user_purpose[0].likes - 1
     user_purpose[0].save()
     return Response({
