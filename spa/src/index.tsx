@@ -1,11 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { SomeComponent } from "./someComponent";
+import {App} from './App';
 
 window.onload = function() {
     ReactDOM.render(
-        <SomeComponent compiler="TypeScript" framework="React"/>,
+        <App />,
         document.getElementById("wrapper")
     );
 };
