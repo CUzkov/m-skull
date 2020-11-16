@@ -8,9 +8,6 @@ from .api import get_friends, get_is_user_exists_url
 import requests
 import json
 from json import JSONDecodeError
-from .utils import add_file_to_model
-import subprocess
-from django.conf import settings
 
 
 @api_view(http_method_names=['GET'])
@@ -58,25 +55,17 @@ def create_moment(request):
                 moment=moment,
                 image_name=img
             )
-        add_file_to_model('comments', moment)
-        add_file_to_model('likes', moment)
-        add_file_to_model('tags_id', moment)
         data_tags = set(data_tags.split(' '))
         for tag in data_tags:
             if not Tag.objects.filter(title=tag):
                 tag_obj = Tag.objects.create(title=tag)
-                add_file_to_model('moments_id', tag_obj)
             tag_obj = Tag.objects.filter(title=tag)[0]
-            with open(
-                settings.MEDIA_ROOT + f'moments_id/{tag_obj.id}.txt',
-                'a'
-            ) as f:
-                f.write(str(moment.id) + '\n')
-            with open(
-                settings.MEDIA_ROOT + f'tags_id/{moment.id}.txt',
-                'a'
-            ) as f:
-                f.write(f'{tag_obj.id}={tag_obj.title}\n')
+            tag_obj.moments_id_file = (
+                tag_obj.moments_id_file + f'\r{tag_obj.id}={tag_obj.title}'
+            )
+            moment.tags_id_file = (
+                moment.tags_id_file + '\r' + str(moment.id)
+            )
         return Response({
             "response": "Success create moment"
         })
@@ -118,18 +107,16 @@ def add_like_by_id(request):
         return Response({
             "response": "not found moment or user"
         })
-    check = ''
-    try:
-        check = subprocess.check_output([
-            'grep',
-            f'i{data["user_id"]};',
-            settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt'
-        ]).decode('utf-8')
-    except Exception:
-        pass
+    moment = moment[0]
+    if f'i{data["user_id"]};' in moment.liked_users_id_file:
+        check = True
+    else:
+        check = False
     if not check:
-        with open(settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt', 'a') as f:
-            f.write(f'i{data["user_id"]};\n')
+        moment.liked_users_id_file = (
+            moment.liked_users_id_file +
+            f'\ri{data["user_id"]};'
+        )
         moment[0].likes = moment[0].likes + 1
         moment[0].save()
         return Response({
@@ -156,22 +143,18 @@ def del_like_by_id(request):
         return Response({
             "response": "not found moment or user"
         })
-    check = ''
-    try:
-        check = subprocess.check_output([
-            'grep',
-            f'i{data["user_id"]};',
-            settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt'
-        ]).decode('utf-8')
-    except Exception:
-        pass
+    moment = moment[0]
+    if f'i{data["user_id"]};' in moment.liked_users_id_file:
+        check = True
+    else:
+        check = False
     if check:
-        subprocess.call([
-            'sed',
-            '-i',
-            f'/i{data["user_id"]};/d',
-            settings.MEDIA_ROOT + f'likes/{moment[0].id}.txt'
-        ])
+        moment.liked_users_id_file = (
+            moment.liked_users_id_file.replace(
+                f'i{data["user_id"]};',
+                ''
+            )
+        )
         moment[0].likes = moment[0].likes - 1
         moment[0].save()
         return Response({
@@ -199,10 +182,15 @@ def add_comment(request, id):
         return Response({
             "response": "not found moment or user"
         })
-    with open(settings.MEDIA_ROOT + f'comments/{moment[0].id}.txt') as f:
-        f.write(str(comment).replace('\n', ' ').replace('\t', ' ') + '\n')
-        f.write(str(id) + '\n')
-        f.write(str(datetime.now()) + '\n')
+    moment[0].comments_file = (
+        moment[0].comments_file +
+        '\r' +
+        str(comment).replace('\n', ' ').replace('\t', ' ') +
+        '\r' +
+        str(id) +
+        '\r' +
+        str(datetime.now())
+    )
     return Response({
         "response": "success"
     })

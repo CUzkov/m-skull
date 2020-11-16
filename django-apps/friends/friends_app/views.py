@@ -4,35 +4,23 @@ from rest_framework.decorators import (
 )
 from rest_framework.response import Response
 from .models import Friend
-from django.conf import settings
 import json
 from django.db.utils import IntegrityError
 from .utils import get_relation
-import subprocess
-from datetime import datetime
 
 
 @api_view(http_method_names=['POST'])
 @permission_classes([])
 def add_user(request):
     request_body = json.loads(request.body)
-    path_to_file = (
-        str(settings.MEDIA_ROOT) +
-        str(request_body['user']['id']) +
-        '.txt'
-    )
-    with open(path_to_file, 'w+') as f:
-        f.write('')
     try:
-        friends_list = Friend.objects.create(
+        Friend.objects.create(
             user_id=request_body['user']['id']
         )
     except IntegrityError:
         return Response({
             "response": "must be unique"
         })
-    friends_list.friends_file.name = str(request_body['user']['id']) + '.txt'
-    friends_list.save()
     return Response({
         "response": "success"
     })
@@ -51,49 +39,53 @@ def update_friends(request, id=1):
         return Response({
             "response": "no such users"
         })
-    data = ''
-    try:
-        data = subprocess.check_output([
-            'grep',
-            f'i{purpose_id}',
-            friends_list_user.friends_file.path
-        ]).decode('utf-8')
-    except Exception:
-        pass
-
+    if f'i{purpose_id}' in friends_list_user.friends_file:
+        data = friends_list_user.friends_file.find(f'i{purpose_id}')
+        data = friends_list_user.friends_file[
+            (data + len(f'i{purpose_id}') + 1):
+            (data + len(f'i{purpose_id}') + 3)
+        ]
+    else:
+        data = ''
     if not data:
-        with open(friends_list_user.friends_file.path, 'a') as f:
-            f.write(f'i{request_body["user"]["id"]}=01={str(datetime.now())}\n')
-        with open(friends_list_purpose.friends_file.path, 'a') as f:
-            f.write(f'i{id}=10={str(datetime.now())}\n')
+        friends_list_user.friends_file = (
+            friends_list_user.friends_file +
+            f'\ri{request_body["user"]["id"]}=01'
+        )
+        friends_list_purpose.friends_file = (
+            friends_list_purpose.friends_file +
+            f'\ri{id}=10'
+        )
     else:
         relation = get_relation(data, request_body["user"]["status"])
         if relation[0] == '00':
-            subprocess.call([
-                'sed',
-                '-i',
-                f'/i{purpose_id}=/d',
-                friends_list_user.friends_file.path
-            ])
-            subprocess.call([
-                'sed',
-                '-i',
-                f'/i{id}=/d',
-                friends_list_purpose.friends_file.path
-            ])
+            friends_list_user.friends_file = (
+                friends_list_user.friends_file.replace(
+                    f'i{purpose_id}=' + str(data) + '\r',
+                    ''
+                )
+            )
+            friends_list_purpose.friends_file = (
+                friends_list_purpose.friends_file.replace(
+                    f'i{id}=' + str(data)[::-1] + '\r',
+                    ''
+                )
+            )
         else:
-            subprocess.call([
-                'sed',
-                '-i',
-                f's/.*i{purpose_id}=.*/i{purpose_id}={relation[0]}={str(datetime.now())}' + r'\n/',
-                friends_list_user.friends_file.path
-            ])
-            subprocess.call([
-                "sed",
-                '-i',
-                f's/.*i{id}=.*/i{id}={relation[1]}={str(datetime.now())}' + r'\n/',
-                friends_list_purpose.friends_file.path
-            ])
+            friends_list_user.friends_file = (
+                friends_list_user.friends_file.replace(
+                    f'i{purpose_id}={data}',
+                    f'i{purpose_id}={relation[0]}\r'
+                )
+            )
+            friends_list_purpose.friends_file = (
+                friends_list_purpose.friends_file.replace(
+                    f'i{id}={data[::-1]}',
+                    f'i{id}={relation[1]}\r'
+                )
+            )
+    friends_list_purpose.save()
+    friends_list_user.save()
     return Response({
         "response": "success"
     })
@@ -108,19 +100,13 @@ def get_user_friends(request, id):
         return Response({
             "response": "User not found"
         })
-    data = subprocess.check_output([
-        'grep',
-        r'11\|01',
-        friends.friends_file.path
-    ]).decode('utf-8')
+    data = friends.friends_file.split('\n')
     data_dict = {
         'users': []
     }
-    data = data.split('\n')
-    for s in data:
-        s_buff = s.split('=')
-        if s_buff:
-            data_dict['users'].extend(s_buff[0][1::])
+    for entry in data:
+        if entry[-3:-1:] == '11' or entry[-3:-1:] == '01':
+            data_dict['users'].extend(entry.split('=')[0][1::])
     return Response({
         "response": data_dict
     })

@@ -13,9 +13,9 @@ class User(AbstractUser):
     )
     status = models.CharField(max_length=20, default='')
     likes = models.PositiveIntegerField(default=0)
-    likes_file_user_id_file = models.FileField(upload_to='likes/', blank=True)
+    likes_user_id = models.TextField()
     dislikes = models.PositiveIntegerField(default=0)
-    dislikes_user_id_file = models.FileField(upload_to='dislikes/', blank=True)
+    dislikes_user_id = models.TextField()
     email = models.EmailField(unique=True)
 
     def __str__(self):
