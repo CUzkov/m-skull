@@ -1,12 +1,8 @@
 import * as React from "react";
 import {ReactElement} from 'react'
 import {FC} from 'react'
-import {cn} from '@bem-react/classname'
 
 import './text.scss'
-
-const cnText = cn('Text');
-
 interface TextProps {
   text: string;
   color?: string;
@@ -29,6 +25,9 @@ export const Text: FC<TextProps> = ({
     case 'l':
       sizeValue = 20;
       break;
+    case 'ml':
+      sizeValue = 15;
+      break;
     case 'm':
       sizeValue = 10;
       break;
@@ -37,8 +36,8 @@ export const Text: FC<TextProps> = ({
   }
 
   return(
-    <div 
-      className={cnText()} 
+    <span 
+      className={'Text'}
       style={{
         color: `${color}`,
         cursor: onClick ? 'pointer' : '',
@@ -47,6 +46,6 @@ export const Text: FC<TextProps> = ({
       onClick={onClick} 
       >
       {text}
-    </div>
+    </span>
   );
 }

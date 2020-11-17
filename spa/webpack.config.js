@@ -32,6 +32,8 @@ module.exports = {
             pages: srcPath('pages'),
             constants: srcPath('constants'),
             assests: srcPath('assests'),
+            models: srcPath('models'),
+            modules: srcPath('modules'),
         }
     },
 

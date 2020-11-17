@@ -1,0 +1,19 @@
+.comment {
+	width: 100%;
+	height: min-content;
+	align-items: center;
+	padding: 4px;
+	.content {
+		align-items: center;
+		margin-left: 5px;
+		img {
+			width: 20px;
+			height: 20px;
+			border-radius: 20px;
+			margin-right: 5px;
+		}
+	}
+	.like {
+		cursor: pointer;
+	}
+}

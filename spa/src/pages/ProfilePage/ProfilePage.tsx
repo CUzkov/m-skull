@@ -1,5 +1,10 @@
 import * as React from "react";
 import {FC} from 'react';
+import {PROFILE} from '../../slabs/profile-page';
+import {ProfileCard} from 'modules/ProfileCard';
+import {SMALL_MOMENTS} from '../../slabs/recomended'
+import {SmallMoment} from 'components/SmallMoment'
+import {Text} from 'components/Text' 
 
 import './profile-page.scss';
 
@@ -7,9 +12,30 @@ export const ProfilePage: FC = () => {
 
 	return(
 		<div className={'profile-page'}>
-      <div className={'card-wrapper'} >
-        <div className={'card'}>
-          
+      <div className={'content-wrapper'} >
+        <ProfileCard 
+          friendsQuantity={PROFILE.friendsQuantity}
+          momentsQuantity={PROFILE.momentsQuantity}
+          mySubsQuantity={PROFILE.mySubsQuantity}
+          name={PROFILE.name}
+          photoPath={PROFILE.photoPath}
+          subsQuantity={PROFILE.subsQuantity}
+        />
+        <div className={'line'} />
+        <Text size={'l'} text={'Ваши публикации: '} />
+        <div className={'moments F-R-SP'} >
+          {SMALL_MOMENTS.map((moment, index) => (
+            <div className={'moment-wrapper'} key={index} >
+              <SmallMoment
+                commentsQuantity={moment.commentsQuantity}
+                isManyImg={moment.isManyImg}
+                likesQuantity={moment.likesQuantity}
+                path={moment.path}
+                referense={moment.referense}
+                alt={moment.alt}
+              />
+            </div>
+          ))}
         </div>
       </div>
 		</div>

@@ -1,55 +1,40 @@
 import * as React from "react";
-import {FC, useState} from 'react'
-import {Text} from 'components/text'
+import {FC} from 'react'
+import {Text} from 'components/Text'
 import ProfileIcon from 'assests/header/icons/profile.svg'
 import CompassIcon from 'assests/header/icons/compass.svg'
 import HomeIcon from 'assests/header/icons/home.svg'
-import {Redirect} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {HEADER_TITLE} from 'constants/header'
 
 import './header.scss'
 
 export const Header: FC = () => {
 
-	const [isRedProfile, setIsRedProfile] = useState<boolean>(false);
-	const [isRedMain, setIsRedMain] = useState<boolean>(false);
-	const [isRedRecommended, setIsRedRecommended] = useState<boolean>(false);
-
-	const onClickProfile = ():void => {
-		setIsRedProfile(true);
-	}
-	const onClickMain = ():void => {
-		setIsRedMain(true);
-	}
-	const onClickCompass = ():void => {
-		setIsRedRecommended(true);
-	}
-
 	return(
 		<>
 			<div className={'Header' + ' F-R-SP'}>
-				<Text text={HEADER_TITLE} color={'black'} onClick={onClickMain} size={'x'} />
+				<Link to={'/'} >
+					<Text text={HEADER_TITLE} color={'black'} size={'x'} />
+				</Link>
 				<div className={'icons F-R-SP'}>
-					<div className={'profile'} onClick={onClickProfile} >
-						<ProfileIcon />
-					</div>
-					<div className={'compass'} onClick={onClickCompass} >
-						<CompassIcon />
-					</div>
-					<div className={'home'} onClick={onClickMain} >
-						<HomeIcon />
-					</div>
+					<Link to={'/'}>
+						<div className={'home'} >
+							<HomeIcon />
+						</div>
+					</Link>
+					<Link to={'/recomended'} >
+						<div className={'compass'} >
+							<CompassIcon />
+						</div>
+					</Link>
+					<Link to={'/profile'} >
+						<div className={'profile'} >
+							<ProfileIcon />
+						</div>
+					</Link>
 				</div>
 			</div>
-			{isRedProfile &&
-				<Redirect to={'/profile'} />
-			}
-			{isRedMain &&
-				<Redirect to={'/'} />
-			}
-			{isRedRecommended &&
-				<Redirect to={'/recommended'} />
-			}
 		</>
 	);
 }
