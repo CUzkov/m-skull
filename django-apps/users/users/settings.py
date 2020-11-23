@@ -131,5 +131,8 @@ REST_FRAMEWORK = {
 }
 
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/users/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = '/home/cuzkov/www.m-skull.ru/users/static/'
+STATIC_URL = '/static/'
 
 APPEND_SLASH = False
