@@ -1,13 +1,22 @@
 import * as React from "react";
-import {FC} from 'react'
-import {ProfileCardDto} from 'models/ProfileCardDto'
-import {Text} from 'components/Text'
-import {PROFILE_CARD_TEXT} from 'constants/profile-card'
+import {FC, useState} from 'react';
+import {Redirect} from 'react-router-dom'; 
+
+import {Text} from 'components/Text';
+import {PROFILE_CARD_TEXT} from 'constants/profile-card';
+import SettingsIcon from 'assests/profile-page/icons/settings.svg'
 
 import './profile-card.scss'
 
-interface ProfileCardProps extends ProfileCardDto {
-
+interface ProfileCardProps {
+	name: string,
+	photoPath: string,
+	friendsQuantity: number,
+	subsQuantity: number,
+	mySubsQuantity: number,
+	momentsQuantity: number,
+	firstName: string,
+	lastName: string
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -16,22 +25,35 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 	friendsQuantity,
 	momentsQuantity,
 	mySubsQuantity,
-	subsQuantity
+	subsQuantity,
+	lastName,
+	firstName
 }: ProfileCardProps) => {
+
+	const [isRedProfileSettings, setIsRedProfileSettings] = useState<boolean>(false);
+
 	return(
-		<div className={'profile-card' + ' F-R-SP'}>
-			<img src={photoPath} alt=""/>
-			<div className={'content F-C-SP'} >
-				<Text text={name} size={'x'} />
-				<div className={'statistics F-R-SP'} >
-					<Text size={'l'} text={PROFILE_CARD_TEXT.mQuantity + ': ' + momentsQuantity}/>
-					<Text size={'l'} text={PROFILE_CARD_TEXT.msQuantity + ': ' + mySubsQuantity}/>
-					<Text size={'l'} text={PROFILE_CARD_TEXT.fQuantity + ': ' + friendsQuantity}/>
-				</div>
-				<div>
-					<Text size={'l'} text={'Усков Даниил'}/>
+		<>
+			<div className={'profile-card' + ' F-R-SP'}>
+				<img src={photoPath} alt=""/>
+				<div className={'content F-C-SP'} >
+					<div className={'F-R-SP'} >
+						<Text text={name} size={'x'} />
+						<div style={{cursor: 'pointer'}} onClick={() => setIsRedProfileSettings(true)} >
+							<SettingsIcon />
+						</div>
+					</div>
+					<div className={'statistics F-R-SP'} >
+						<Text size={'l'} text={PROFILE_CARD_TEXT.mQuantity + ': ' + momentsQuantity}/>
+						<Text size={'l'} text={PROFILE_CARD_TEXT.msQuantity + ': ' + mySubsQuantity}/>
+						<Text size={'l'} text={PROFILE_CARD_TEXT.fQuantity + ': ' + friendsQuantity}/>
+					</div>
+					<div>
+						<Text size={'l'} text={`${firstName} ${lastName}`}/>
+					</div>
 				</div>
 			</div>
-		</div>
+			{isRedProfileSettings && <Redirect to={'/profile-settings'} /> }
+		</>
 	);
 }

@@ -8,27 +8,29 @@ interface TextProps {
   color?: string;
   onClick?: () => void;
   size: string;
+  className?: string;
 }
 
 export const Text: FC<TextProps> = ({
   text,
   color,
   onClick,
-  size
+  size,
+  className
 }: TextProps): ReactElement => {
 
   let sizeValue;
   switch (size) {
-    case 'x':
+    case 'xl':
       sizeValue = 30;
       break;
     case 'l':
       sizeValue = 20;
       break;
-    case 'ml':
+    case 'm':
       sizeValue = 15;
       break;
-    case 'm':
+    case 's':
       sizeValue = 10;
       break;
     default:
@@ -37,13 +39,13 @@ export const Text: FC<TextProps> = ({
 
   return(
     <span 
-      className={'Text'}
+      className={`${className} Text`}
       style={{
         color: `${color}`,
         cursor: onClick ? 'pointer' : '',
         fontSize: sizeValue 
       }}
-      onClick={onClick} 
+      onClick={onClick}
       >
       {text}
     </span>

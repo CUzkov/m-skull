@@ -1,7 +1,8 @@
 import {ITokens, IRefresh, IAccess} from 'types/tokens';
 import {IUserAuthData, IUserProfile} from 'types/user';
+import {IGetData, IGetDataUser} from 'types/common';
 
-const API_USER: string = 'http://127.0.0.1:8080';
+export const API_USER: string = 'http://127.0.0.1:8080';
 const API_FRIEND: string = 'http://127.0.0.1:8082';
 const API_MOMENT: string = 'http://127.0.0.1:8081';
 
@@ -30,7 +31,7 @@ export class APIUser {
 		let responseJSON: Promise<IAccess> = await response.json();
 		return responseJSON;
 	}
-	static getMe = async (token: string) => {
+	static getMe = async (token: string):Promise<IGetDataUser<IUserProfile>> => {
 		let response = await APIUser.getAccessToken(token)
 			.then( async (accessToken) => {
 				let response = await fetch(API_USER + '/api/users/me/', {

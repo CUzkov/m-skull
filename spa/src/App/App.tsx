@@ -10,7 +10,8 @@ import {
   MainPage,
   ProfilePage,
   RecomendedPage,
-  MomentPage
+  MomentPage,
+  ProfileSettingsPage
 } from '../pages';
 import {APIUser} from 'utils/api';
 import {useDispatch, useSelector} from 'react-redux';
@@ -37,6 +38,7 @@ export const App: FC = () => {
         <Route path="/profile" exact render={() => <ProfilePage />} />
         <Route path="/" exact render={() => <MainPage />} />
         <Route path="/recomended" exact render={() => <RecomendedPage />} />
+        <Route path="/profile-settings" exact render={() => <ProfileSettingsPage />} />
         <Route path="/moment" exact render={() => <MomentPage />} />
 			</Router>    
     </>

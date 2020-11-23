@@ -15,7 +15,7 @@ export const Header: FC = () => {
 		<>
 			<div className={'Header' + ' F-R-SP'}>
 				<Link to={'/'} >
-					<Text text={HEADER_TITLE} color={'black'} size={'x'} />
+					<div className={'title-text'}>{HEADER_TITLE}</div>
 				</Link>
 				<div className={'icons F-R-SP'}>
 					<Link to={'/'}>
