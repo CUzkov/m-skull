@@ -17,7 +17,7 @@ module.exports = {
         compress: true,
         hot: true,
         historyApiFallback: true,
-        port: 8080
+        port: 8000
     },
 
     // Enable sourcemaps for debugging webpack's output.
@@ -34,6 +34,8 @@ module.exports = {
             assests: srcPath('assests'),
             models: srcPath('models'),
             modules: srcPath('modules'),
+            store: srcPath('store'),
+            utils: srcPath('utils'),
         }
     },
 

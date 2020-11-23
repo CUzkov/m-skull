@@ -1,0 +1,1 @@
+export const SET_AUTHS: string = "SET_AUTHS";

@@ -11,11 +11,24 @@ import {
   ProfilePage,
   RecomendedPage,
   MomentPage
-} from '../pages'
+} from '../pages';
+import {APIUser} from 'utils/api';
+import {useDispatch, useSelector} from 'react-redux';
+import {setUserAuths} from 'store/actionsCreators/userActionCreator';
+import {IUserStore} from 'types/user';
 
 import './app.scss'
 
 export const App: FC = () => {
+
+  const dispatch = useDispatch();
+  if (localStorage.getItem('login')) {
+    dispatch(setUserAuths({
+      login: localStorage.getItem('login'),
+      refreshToken: localStorage.getItem('refreshToken')
+    }))
+  }
+
   return(
     <>
 			<Router>
