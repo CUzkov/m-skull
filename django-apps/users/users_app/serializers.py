@@ -12,4 +12,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = '__all__'
+        exclude = [
+            'groups',
+            'user_permissions',
+            'dislikes_user_id',
+            'likes_user_id',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'password'
+        ]
