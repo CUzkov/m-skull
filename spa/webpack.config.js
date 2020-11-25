@@ -36,6 +36,7 @@ module.exports = {
             modules: srcPath('modules'),
             store: srcPath('store'),
             utils: srcPath('utils'),
+            types: srcPath('types'),
         }
     },
 

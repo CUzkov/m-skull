@@ -6,3 +6,11 @@ export const setUserAuths = (payload: IUserStore):IAction<IUserStore> => ({
   type: SET_AUTHS,
   payload: payload
 });
+
+export const setNoneAuth = ():IAction<IUserStore> => ({
+  type: SET_AUTHS,
+  payload: {
+    login: '',
+    refreshToken: ''
+  }
+});

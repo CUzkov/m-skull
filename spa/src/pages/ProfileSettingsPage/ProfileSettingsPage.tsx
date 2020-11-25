@@ -1,20 +1,22 @@
 import * as React from "react";
 import {FC, useState, useEffect, useCallback} from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {Redirect} from 'react-router-dom';
 
-import {IUserStore} from 'types/user';
-import {APIUser} from 'utils/api';
-import {IUserProfile} from 'types/user';
+import {IUserStore, IUserProfile} from 'types/user';
+import {APIUser, API_USER} from 'utils/api';
 import {isMobile} from 'react-device-detect';
 import {SIDE_BAR, PPS_TEXT} from 'constants/profile-settings-page';
 import {Text} from 'components/Text';
-import {API_USER} from 'utils/api';
+import {ioIGetDataUser} from 'types/common';
+import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 
 import './profile-settings-page.scss';
 
 export const ProfileSettingsPage: FC = () => {
 
   const userStore: IUserStore = useSelector(state => state.user);
+  const dispatch = useDispatch();
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [sideBarState, setSideBarState] = useState(SIDE_BAR);
   const setSelectedSideBarElement = useCallback(
@@ -37,11 +39,18 @@ export const ProfileSettingsPage: FC = () => {
   }, []);
 
   useEffect(() => {
-    APIUser.getMe(userStore.refreshToken).then(res => setUserProfile(res.data.user));
+    APIUser.getMe(userStore.refreshToken).then(res => {
+      if (ioIGetDataUser(res)) {
+        setUserProfile(res.data);
+      } else {
+        dispatch(setNoneAuth());
+      }
+    });
   }, []);
 
 	return(
     <>
+      {!userStore.refreshToken && <Redirect to={'/login'} />}
       <div className={isMobile ? 'profile-settings-page-mob' : 'profile-settings-page'}>
         <div className={'content-wrapper F-R-SP'} >
           <div className={'side-bar'} >
@@ -69,13 +78,13 @@ export const ProfileSettingsPage: FC = () => {
             <div className={'content'} >
               <div className={'title F-R-S'} >
                 <img 
-                  src={API_USER + userProfile?.profile_image}
+                  src={API_USER + userProfile?.user.profile_image}
                   width={50}
                   height={50}
                   className={'photo'}
                 />
                 <div className={'F-C-SP'} >
-                  <div className={'username-text'}>{userProfile?.username}</div>
+                  <div className={'username-text'}>{userProfile?.user.username}</div>
                   <label 
                     className={'photo-label'}
                     htmlFor={'photo-uploader'}
@@ -90,6 +99,14 @@ export const ProfileSettingsPage: FC = () => {
                   />
                 </div>
               </div>
+              <div className={'ch-input-block'} >
+                <div className={'ch-input-label'}>
+
+                </div>
+                <div className={'ch-input-label'}>
+                  
+                </div>
+              </div>  
             </div>
           }
         </div>

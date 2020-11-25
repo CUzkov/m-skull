@@ -1,6 +1,11 @@
-import {ITokens, IRefresh, IAccess} from 'types/tokens';
+import {
+	ITokens,
+	IAccess,
+	IAccessError,
+	ioIAccessError
+} from 'types/tokens';
 import {IUserAuthData, IUserProfile} from 'types/user';
-import {IGetData, IGetDataUser} from 'types/common';
+import {IGetData, IError} from 'types/common';
 
 export const API_USER: string = 'http://127.0.0.1:8080';
 const API_FRIEND: string = 'http://127.0.0.1:8082';
@@ -18,7 +23,7 @@ export class APIUser {
 		let responseJSON: Promise<ITokens> = response.json();
 		return responseJSON;
 	}
-	static getAccessToken = async (token: string):Promise<IAccess> => {
+	static getAccessToken = async (token: string):Promise<IAccess | IAccessError> => {
 		let response = await fetch(API_USER + '/api/token/refresh/', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -28,19 +33,27 @@ export class APIUser {
 				'Content-Type': 'application/json;charset=utf-8',
 			}
 		});
-		let responseJSON: Promise<IAccess> = await response.json();
+		let responseJSON: Promise<IAccess | IAccessError> = await response.json();
 		return responseJSON;
 	}
-	static getMe = async (token: string):Promise<IGetDataUser<IUserProfile>> => {
+	static getMe = async (token: string):Promise<IGetData<IUserProfile> | IError> => {
 		let response = await APIUser.getAccessToken(token)
 			.then( async (accessToken) => {
-				let response = await fetch(API_USER + '/api/users/me/', {
-					method: 'GET',
-					headers: {
-						'Authorization': 'Bearer ' + accessToken.access
+				if (ioIAccessError(accessToken)) {
+					if (accessToken.code === 'token_not_valid') {
+						return {
+							error: 'token_not_valid'
+						}
 					}
-				});
-				return response.json();
+				} else {
+					let response = await fetch(API_USER + '/api/users/me/', {
+						method: 'GET',
+						headers: {
+							'Authorization': 'Bearer ' + accessToken.access
+						}
+					});
+					return response.json();
+				}
 			});
 		return response;
 	}

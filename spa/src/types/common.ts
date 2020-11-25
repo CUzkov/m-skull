@@ -1,3 +1,5 @@
+import {IUserProfile} from './user';
+
 export interface IAction<T> {
   type: string;
   payload: T;
@@ -9,9 +11,15 @@ export interface IGetDataArray<T> {
 export interface IGetData<T> {
   data: T;
 }
-// надо переделать
-export interface IGetDataUser<T> {
-  data: {
-    user: T;
-  };
+
+export interface IError {
+  error: string;
+}
+
+export function ioIError(object: any): object is IError {
+	return 'error' in object;
+}
+
+export function ioIGetDataUser(object: any): object is IGetData<IUserProfile> {
+	return 'data' in object;
 }
