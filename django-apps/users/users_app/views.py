@@ -12,9 +12,32 @@ import json
 from json import JSONDecodeError
 import requests
 from .apis import subscribers_create_user
+from users.settings import MEDIA_ROOT
+import os
 
 User = get_user_model()
 
+@api_view(http_method_names=['POST'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def change_user_photo(request):
+    user = User.objects.get(id=request.user.id)
+    try:
+        img = dict(request.FILES)["img"]
+    except KeyError:
+        return Response({
+            "response": "bad request"
+        })
+    finally:
+        old_path = MEDIA_ROOT + user.profile_image.url[7:]
+        try:
+            os.remove(old_path)
+        except Exception:
+            pass
+        user.profile_image = img[0]
+        user.save()
+        return Response({
+            "response": "success"
+        })
 
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser])
