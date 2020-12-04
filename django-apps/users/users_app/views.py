@@ -20,12 +20,13 @@ User = get_user_model()
 @api_view(http_method_names=['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def change_user_photo(request):
+    """change user photo"""
     user = User.objects.get(id=request.user.id)
     try:
-        img = dict(request.FILES)["img"]
+        img = dict(request.FILES)["file"][0]
     except KeyError:
         return Response({
-            "response": "bad request"
+            "error": "not file"
         })
     finally:
         old_path = MEDIA_ROOT + user.profile_image.url[7:]
@@ -33,11 +34,12 @@ def change_user_photo(request):
             os.remove(old_path)
         except Exception:
             pass
-        user.profile_image = img[0]
+        user.profile_image = img
         user.save()
         return Response({
-            "response": "success"
+            "success": "success"
         })
+
 
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser])
@@ -128,7 +130,7 @@ def create_user(request):
 
 
 @api_view(http_method_names=['PUT'])
-@permission_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def update_user(request):
     """update user"""
     try:

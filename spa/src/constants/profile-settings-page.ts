@@ -14,10 +14,14 @@ export const SIDE_BAR: ISideBarState = {
     {
       name: 'Сменить пароль',
       isSelected: false,
+    },
+    {
+      name: 'Сменить почту',
+      isSelected: false,
     }
   ]
 }
 
 export const PPS_TEXT = {
-  change_photo: 'Сменить фото профиля'
+  change_photo: 'Изменить фото профиля',
 }

@@ -8,8 +8,9 @@ import {APIUser, API_USER} from 'utils/api';
 import {isMobile} from 'react-device-detect';
 import {SIDE_BAR, PPS_TEXT} from 'constants/profile-settings-page';
 import {Text} from 'components/Text';
-import {ioIGetDataUser} from 'types/common';
+import {ioIGetDataUser, ioIError, IChangeUserForm} from 'types/common';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
+import {Form, Field} from 'react-final-form'
 
 import './profile-settings-page.scss';
 
@@ -19,6 +20,17 @@ export const ProfileSettingsPage: FC = () => {
   const dispatch = useDispatch();
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [sideBarState, setSideBarState] = useState(SIDE_BAR);
+
+  const refreshProfile = () => {
+    APIUser.getMe(userStore.refreshToken).then(res => {
+      if (ioIGetDataUser(res)) {
+        setUserProfile(res.data);
+      } else {
+        dispatch(setNoneAuth());
+      }
+    });
+  }
+
   const setSelectedSideBarElement = useCallback(
     (index: number) => (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       setSideBarState({
@@ -35,17 +47,54 @@ export const ProfileSettingsPage: FC = () => {
   }, [sideBarState]);
 
   const onLoadPhotoHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value)
+    APIUser.changePhoto(userStore.refreshToken, e.target)
+      .then((res) => {
+        if (!ioIError(res)) {
+          refreshProfile();
+        }
+      })
   }, []);
 
   useEffect(() => {
-    APIUser.getMe(userStore.refreshToken).then(res => {
-      if (ioIGetDataUser(res)) {
-        setUserProfile(res.data);
-      } else {
-        dispatch(setNoneAuth());
-      }
-    });
+    refreshProfile();
+  }, [onLoadPhotoHandler]);
+
+  const formHandlers = [
+    {
+      label: 'Изменить имя пользователя',
+      default: userProfile?.user.username,
+      name: 'username'
+    },
+    {
+      label: 'Изменить имя',
+      default: userProfile?.user.first_name,
+      name: 'first_name'
+    },
+    {
+      label: 'Изменить фамилию',
+      default: userProfile?.user.last_name,
+      name: 'last_name'
+    },
+    {
+      label: 'Изменить статус',
+      default: userProfile?.user.status,
+      name: 'status'
+    },
+    {
+      label: 'Изменить дату рождения',
+      default: userProfile?.user.birthday,
+      name: 'birthday'
+    }
+  ];
+
+  const onSubmitForm = useCallback((formValues: IChangeUserForm, form: any): void => {
+    APIUser.changeUserData(userStore.refreshToken, formValues)
+      .then((res) => {
+        if (!ioIError(res)) {
+          refreshProfile();
+        }
+        form.reset();
+      });
   }, []);
 
 	return(
@@ -99,14 +148,35 @@ export const ProfileSettingsPage: FC = () => {
                   />
                 </div>
               </div>
-              <div className={'ch-input-block'} >
-                <div className={'ch-input-label'}>
+              <Form 
+                onSubmit={onSubmitForm}
+              >
+                {props => (
+                  <>
+                    <form onSubmit={props.handleSubmit}>
+                      {formHandlers.map((element, index) => (
+                        <Field name={element.name} key={element.label}>
+                          {props => (
+                            <div className={'ch-input-block'} >
+                              <div className={'ch-input-label'}>
+                                {element.label}
+                              </div>
+                              <div className={'ch-input-label'}>
+                                <input 
+                                  placeholder={element.default}
+                                  {...props.input}
+                                />
+                              </div>
+                            </div>
+                          )}
 
-                </div>
-                <div className={'ch-input-label'}>
-                  
-                </div>
-              </div>  
+                        </Field>
+                      ))}
+                      <button type="submit">Submit</button>
+                    </form>
+                  </>
+                )}
+              </Form>
             </div>
           }
         </div>

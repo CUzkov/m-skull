@@ -56,8 +56,10 @@
 				}
 			}
 			.ch-input-block {
+				margin: 10px 0px;
 				.ch-input-label {
 					width: 40%;
+					white-space: nowrap;
 				}
 				.ch-input {
 					width: 60%;

@@ -11,7 +11,7 @@ class User(AbstractUser):
         blank=True,
         upload_to='images/'
     )
-    status = models.CharField(max_length=20, default='')
+    status = models.CharField(max_length=50, default='')
     likes = models.PositiveIntegerField(default=0)
     likes_user_id = models.TextField()
     dislikes = models.PositiveIntegerField(default=0)
