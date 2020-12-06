@@ -13,10 +13,8 @@ import {
   MomentPage,
   ProfileSettingsPage
 } from '../pages';
-import {APIUser} from 'utils/api';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {setUserAuths} from 'store/actionsCreators/userActionCreator';
-import {IUserStore} from 'types/user';
 
 import './app.scss'
 
@@ -35,6 +33,7 @@ export const App: FC = () => {
 			<Router>
         <Header />
         <Route path="/login" exact render={() => <LoginPage />} />
+        <Route path="/profile/:id" exact component={ProfilePage} />
         <Route path="/profile" exact render={() => <ProfilePage />} />
         <Route path="/" exact render={() => <MainPage />} />
         <Route path="/recomended" exact render={() => <RecomendedPage />} />

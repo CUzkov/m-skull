@@ -7,5 +7,6 @@ export const LOGIN_PAGE_TEXT = {
   repeat_password: 'Повторите пароль',
   first_name: 'Имя',
   last_name: 'Фамилия',
-  email: 'Email'
+  email: 'Email',
+  reg: "Зарегистрироваться"
 }

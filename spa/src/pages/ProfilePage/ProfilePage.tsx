@@ -14,25 +14,34 @@ import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 
 import './profile-page.scss';
 
-export const ProfilePage: FC = () => {
+interface IProfilePageProps {
+  match?: any
+}
+
+export const ProfilePage: FC<IProfilePageProps> = ({
+  match
+}: IProfilePageProps) => {
 
   const userStore: IUserStore = useSelector(state => state.user);
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    APIUser.getMe(userStore.refreshToken).then(res => {
-      if (ioIGetDataUser(res)) {
-        setUserProfile(res.data);
-      } else {
-        dispatch(setNoneAuth());
-      }
-    });
-  }, []);
+  console.log(match?.params.id)
+
+  // useEffect(() => {
+  //   APIUser.getMe(userStore.refreshToken).then(res => {
+  //     if (ioIGetDataUser(res)) {
+  //       setUserProfile(res.data);
+  //     } else {
+  //       dispatch(setNoneAuth());
+  //     }
+  //   });
+  // }, []);
 
 	return(
     <>
       {!userStore.refreshToken && <Redirect to={'/login'} />}
+      {true && <Redirect to={'/profile/2'} />}
       <div className={'profile-page'}>
         <div className={'content-wrapper'} >
           <ProfileCard 

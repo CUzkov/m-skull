@@ -9,7 +9,8 @@ module.exports = {
     entry: ["./src/index.tsx", "./src/index.scss"],
     output: {
         filename: "bundle.js",
-        path: path.join(__dirname, "out")
+        path: path.join(__dirname, "out"),
+        publicPath: '/',
     },
 
     devServer: {

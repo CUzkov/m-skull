@@ -177,7 +177,7 @@ export const LoginPage: FC = () => {
                       )}
                     </Field>
                   </div>
-                  <button type={'submit'}>{LOGIN_PAGE_TEXT.enter}</button>
+                  <button type={'submit'}>{LOGIN_PAGE_TEXT.reg}</button>
                   <button type={'button'} onClick={toggleForms}>
                     {LOGIN_PAGE_TEXT.orLogin}
                   </button>
