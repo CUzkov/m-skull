@@ -11,11 +11,11 @@ class User(AbstractUser):
         blank=True,
         upload_to='images/'
     )
-    status = models.CharField(max_length=50, default='')
+    status = models.CharField(max_length=50, default='', blank=True)
     likes = models.PositiveIntegerField(default=0)
-    likes_user_id = models.TextField()
+    likes_user_id = models.TextField(blank=True, default='')
     dislikes = models.PositiveIntegerField(default=0)
-    dislikes_user_id = models.TextField()
+    dislikes_user_id = models.TextField(blank=True, default='')
     email = models.EmailField(unique=True)
 
     def __str__(self):

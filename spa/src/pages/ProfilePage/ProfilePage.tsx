@@ -18,7 +18,6 @@ export const ProfilePage: FC = () => {
 
   const userStore: IUserStore = useSelector(state => state.user);
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
-  const [isRedToLogin, setIsRedToLogin] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   useEffect(() => {

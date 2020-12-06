@@ -3,6 +3,10 @@ export interface IUserAuthData {
 	password: string
 }
 
+export function ioIUserAuthData(object: any): object is IUserAuthData {
+	return 'username' in object;
+}
+
 export interface IUserStore {
 	login: string,
 	refreshToken: string

@@ -1,10 +1,12 @@
 import * as React from "react";
-import {FC, useState} from 'react';
+import {FC, useState, useCallback} from 'react';
 import {Redirect} from 'react-router-dom'; 
 
 import {Text} from 'components/Text';
 import {PROFILE_CARD_TEXT} from 'constants/profile-card';
 import SettingsIcon from 'assests/profile-page/icons/settings.svg'
+import {useDispatch} from 'react-redux';
+import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 
 import './profile-card.scss'
 
@@ -31,6 +33,10 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 }: ProfileCardProps) => {
 
 	const [isRedProfileSettings, setIsRedProfileSettings] = useState<boolean>(false);
+	const dispatch = useDispatch();
+	const onLogout = useCallback(() => {
+		dispatch(setNoneAuth());
+	}, []);
 
 	return(
 		<>
@@ -50,6 +56,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 					</div>
 					<div>
 						<Text size={'l'} text={`${firstName} ${lastName}`}/>
+					</div>
+					<div className={'F-R-FE'} >
+						<button onClick={onLogout}>Выйти</button>
 					</div>
 				</div>
 			</div>

@@ -28,6 +28,12 @@
 	justify-content: center;
 }
 
+.F-R-FE {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
 :root {
 	--header-height: 60px;
 	--page-color: MintCream;

@@ -17,6 +17,7 @@ import os
 
 User = get_user_model()
 
+
 @api_view(http_method_names=['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def change_user_photo(request):
@@ -55,7 +56,7 @@ def get_all_users(request):
 
 
 @api_view(http_method_names=['GET'])
-@permission_classes([IsAdminUser, IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def get_me(request):
     """get user that auth"""
     user = User.objects.filter(id=request.user.id)
@@ -90,17 +91,17 @@ def get_user(request, id=1):
 @permission_classes([])
 def create_user(request):
     """create user"""
-    data = dict(request.POST)
-    for entry in data:
-        data[entry] = data[entry][0]
+    data = json.loads(request.body.decode())
     data.update({
         "likes": 0,
         "dislikes": 0,
-        "profile_image": dict(request.FILES).get('photo', None)
+        "profile_image": dict(request.FILES).get('photo', None),
+        "status": ""
     })
     if data["profile_image"] is not None:
         data["profile_image"] = data["profile_image"][0]
     serializes_user = UserSerializer(data=data)
+    print(data)
     if (serializes_user.is_valid(raise_exception=True)):
         response = requests.post(
             url=subscribers_create_user,

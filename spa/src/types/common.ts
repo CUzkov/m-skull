@@ -28,6 +28,19 @@ export interface IChangeUserForm {
   birthday?: string;
 }
 
+export interface IRegForm {
+  username?: string;
+  password?: string;
+  repeat_password?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+}
+
+export function ioIRegForm(object: any): object is IRegForm {
+	return 'username' in object;
+}
+
 export function ioIError(object: any): object is IError {
 	return 'error' in object;
 }

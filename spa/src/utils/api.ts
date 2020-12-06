@@ -5,7 +5,7 @@ import {
 	ioIAccessError
 } from 'types/tokens';
 import {IUserAuthData, IUserProfile} from 'types/user';
-import {IGetData, IError, ISucces, IChangeUserForm} from 'types/common';
+import {IGetData, IError, ISucces, IChangeUserForm, IRegForm} from 'types/common';
 
 export const API_USER: string = 'http://127.0.0.1:8080';
 const API_FRIEND: string = 'http://127.0.0.1:8082';
@@ -102,5 +102,16 @@ export class APIUser {
 				}
 			});
 		return response;
+	}
+	static regUser = async (userForm: IRegForm):Promise<ISucces | IError> => {
+		let response = await fetch(API_USER + '/api/users/create/', {
+			method: 'POST',
+			body: JSON.stringify(userForm),
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8'
+			}
+		});
+		let responseJSON: Promise<ISucces | IError> = response.json();
+		return responseJSON;
 	}
 }
