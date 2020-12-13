@@ -11,6 +11,7 @@ export const setNoneAuth = ():IAction<IUserStore> => ({
   type: SET_AUTHS,
   payload: {
     login: '',
-    refreshToken: ''
+    refreshToken: '',
+    id: -1
   }
 });

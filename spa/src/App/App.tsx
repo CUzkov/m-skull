@@ -1,7 +1,8 @@
 import * as React from "react";
 import {
 	BrowserRouter as Router,
-	Route
+  Route,
+  browserHistory
 } from 'react-router-dom';
 import {FC} from 'react'
 import {Header} from '../modules/header'
@@ -24,16 +25,17 @@ export const App: FC = () => {
   if (localStorage.getItem('login')) {
     dispatch(setUserAuths({
       login: localStorage.getItem('login'),
-      refreshToken: localStorage.getItem('refreshToken')
+      refreshToken: localStorage.getItem('refreshToken'),
+      id: Number(localStorage.getItem('id'))
     }))
   }
 
   return(
     <>
-			<Router>
+			<Router history={browserHistory} >
         <Header />
         <Route path="/login" exact render={() => <LoginPage />} />
-        <Route path="/profile/:id" exact component={ProfilePage} />
+        <Route path="/profile/:id" exact render={(props) => <ProfilePage {...props}/>} />
         <Route path="/profile" exact render={() => <ProfilePage />} />
         <Route path="/" exact render={() => <MainPage />} />
         <Route path="/recomended" exact render={() => <RecomendedPage />} />

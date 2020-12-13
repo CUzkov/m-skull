@@ -4,7 +4,8 @@ import {SET_AUTHS, NONE_AUTH} from 'store/actions/userAction';
 
 const initialState: IUserStore = {
   login: '',
-  refreshToken: ''
+  refreshToken: '',
+  id: 0
 }
 
 export const userReducer = (state: IUserStore = initialState, action: IAction<IUserStore>): IUserStore => {

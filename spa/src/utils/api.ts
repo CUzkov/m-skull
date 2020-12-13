@@ -4,8 +4,9 @@ import {
 	IAccessError,
 	ioIAccessError
 } from 'types/tokens';
-import {IUserAuthData, IUserProfile} from 'types/user';
+import {IUserAuthData, IUserProfile, IUserId} from 'types/user';
 import {IGetData, IError, ISucces, IChangeUserForm, IRegForm} from 'types/common';
+import {IIsFriendStruct} from 'types/friends';
 
 export const API_USER: string = 'http://127.0.0.1:8080';
 const API_FRIEND: string = 'http://127.0.0.1:8082';
@@ -113,5 +114,49 @@ export class APIUser {
 		});
 		let responseJSON: Promise<ISucces | IError> = response.json();
 		return responseJSON;
+	}
+	static getUserById = async (userId: number):Promise<IGetData<IUserProfile> | IError> => {
+		let response = await fetch(API_USER + `/api/users/${userId}/`);
+		let responseJSON: Promise<IGetData<IUserProfile> | IError> = response.json();
+		return responseJSON;
+	}
+	static getIsPurposeUserFriend = async (purposeId: number, userId: number):Promise<IGetData<IIsFriendStruct> | IError> => {
+		let response = await fetch(API_FRIEND + `/api/friends/isFriend/${purposeId}/${userId}/`, {
+			method: 'GET'
+		});
+		let responseJSON: Promise<IGetData<IIsFriendStruct> | IError> = response.json();
+		return responseJSON;
+	}
+	static getUserId = async (username: string):Promise<IGetData<IUserId> | IError> => {
+		let response = await fetch(API_USER + `/api/users/me/${username}/`);
+		let responseJSON: Promise<IGetData<IUserId> | IError> = response.json();
+		return responseJSON;
+	}
+	static changeFriends = async (token: string, type: 'add' | 'del', userId: number, purposeId: number):Promise<ISucces | IError> => {
+		let response = await APIUser.getAccessToken(token)
+			.then( async (accessToken) => {
+				if (ioIAccessError(accessToken)) {
+					if (accessToken.code === 'token_not_valid') {
+						return {
+							error: 'token_not_valid'
+						}
+					}
+				} else {
+					let response = await fetch(API_FRIEND + `/api/friends/update/${userId}/`, {
+						method: 'PUT',
+						headers: {
+							'Authorization': 'Bearer ' + accessToken.access
+						},
+						body: JSON.stringify({
+							user: {
+								id: purposeId,
+								status: type
+							}
+						})
+					});
+					return response.json();
+				}
+			});
+		return response;
 	}
 }

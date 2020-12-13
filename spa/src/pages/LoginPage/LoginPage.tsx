@@ -24,14 +24,21 @@ export const LoginPage: FC = () => {
   const submitHandler = (values: IRegForm | IUserAuthData, form: any): void => {
     if(isLoginForm) {
       if (ioIUserAuthData(values)) {
-        APIUser.getToken(values).then(res => {
-          if(res.refresh) {
+        APIUser.getToken(values).then(resGetToken => {
+          if(resGetToken.refresh) {
             localStorage.setItem('login', values.username);
-            localStorage.setItem('refreshToken', res.refresh);
-            dispatch(setUserAuths({
-              login: values.username,
-              refreshToken: res.refresh
-            }));
+            localStorage.setItem('refreshToken', resGetToken.refresh);
+            APIUser.getUserId(values.username)
+              .then((res) => {
+                if (!ioIError(res)) {
+                  dispatch(setUserAuths({
+                    login: values.username,
+                    refreshToken: resGetToken.refresh,
+                    id: res.data.id
+                  }));
+                  localStorage.setItem('id', String(res.data.id));
+                }
+              });
             setIsRedirectToMain(true);
           } else { alert('Неправильный логин или пароль!') }
         });
@@ -47,19 +54,26 @@ export const LoginPage: FC = () => {
           values?.password
         ) {
           APIUser.regUser(values)
-            .then(res => {
-              if (!ioIError(res)) {
+            .then(resReg => {
+              if (!ioIError(resReg)) {
                 APIUser.getToken({
                   username: values.username,
                   password: values.password
-                }).then(res => {
-                  if(res.refresh) {
+                }).then(resGetToken => {
+                  if(resGetToken.refresh) {
                     localStorage.setItem('login', values.username);
-                    localStorage.setItem('refreshToken', res.refresh);
-                    dispatch(setUserAuths({
-                      login: values.username,
-                      refreshToken: res.refresh
-                    }));
+                    localStorage.setItem('refreshToken', resGetToken.refresh);
+                    APIUser.getUserId(values.username)
+                    .then((res) => {
+                      if (!ioIError(res)) {
+                        dispatch(setUserAuths({
+                          login: values.username,
+                          refreshToken: resGetToken.refresh,
+                          id: res.data.id
+                        }));
+                        localStorage.setItem('id', String(res.data.id));
+                      }
+                    });
                     setIsRedirectToMain(true);
                   } else { alert('Неправильный логин или пароль!') }
                 });

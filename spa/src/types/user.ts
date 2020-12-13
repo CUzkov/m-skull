@@ -9,7 +9,8 @@ export function ioIUserAuthData(object: any): object is IUserAuthData {
 
 export interface IUserStore {
 	login: string,
-	refreshToken: string
+	refreshToken: string,
+	id: number
 }
 
 export interface IUserProfile {
@@ -27,4 +28,8 @@ export interface IUserProfile {
 		dislikes: number,
 		email: string
 	}
+}
+
+export interface IUserId {
+	id: number
 }
