@@ -62,16 +62,18 @@ def update_friends(request, id=1):
         if relation[0] == '00':
             friends_list_user.user_friends = (
                 friends_list_user.user_friends.replace(
-                    f'i{purpose_id}=' + str(data) + '\r',
+                    '\r' + f'i{purpose_id}=' + str(data),
                     ''
                 )
             )
+            print(friends_list_user.user_friends)
             friends_list_purpose.user_friends = (
                 friends_list_purpose.user_friends.replace(
-                    f'i{id}=' + str(data)[::-1] + '\r',
+                    '\r' + f'i{id}=' + str(data)[::-1],
                     ''
                 )
             )
+            print(friends_list_purpose.user_friends)
         else:
             friends_list_user.user_friends = (
                 friends_list_user.user_friends.replace(
