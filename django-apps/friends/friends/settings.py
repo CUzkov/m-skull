@@ -117,3 +117,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/friends/'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True

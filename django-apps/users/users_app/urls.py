@@ -7,7 +7,8 @@ from .views import (
     is_user_exists,
     like_by_id,
     dislike_by_id,
-    change_user_photo
+    change_user_photo,
+    get_user_id
 )
 from django.urls import path
 from rest_framework_simplejwt.views import (
@@ -27,4 +28,5 @@ urlpatterns = [
     path('users/update/', update_user, name='update_user'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('users/me/<slug:username>/', get_user_id, name='get_me_id'),
 ]

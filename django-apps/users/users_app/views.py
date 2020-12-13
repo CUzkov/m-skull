@@ -76,9 +76,7 @@ def get_user(request, id=1):
     serializers_user = UserSerializer(user, many=True)
     if not serializers_user.data:
         return Response({
-            "data": {
-                "user": {}
-            }
+            "error": "not found"
         })
     return Response({
         "data": {
@@ -247,4 +245,20 @@ def dislike_by_id(request):
     user_purpose[0].save()
     return Response({
         "response": "success dislike"
+    })
+
+
+@api_view(http_method_names=['GET'])
+@permission_classes([])
+def get_user_id(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except Exception:
+        return Response({
+            "error": "user not found"
+        })
+    return Response({
+        "data": {
+            "id": user.id
+        }
     })
