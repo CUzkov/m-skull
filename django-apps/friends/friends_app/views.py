@@ -16,7 +16,10 @@ def add_user(request):
     try:
         Friend.objects.create(
             user_id=request_body['user']['id'],
-            user_friends=''
+            user_friends='',
+            my_friends_q=0,
+            i_following_q=0,
+            my_followers_q=0
         )
     except IntegrityError:
         return Response({
@@ -53,12 +56,20 @@ def update_friends(request, id=1):
             friends_list_user.user_friends +
             f'\ri{request_body["user"]["id"]}=01'
         )
+        friends_list_user.i_following_q = friends_list_user.i_following_q + 1
         friends_list_purpose.user_friends = (
             friends_list_purpose.user_friends +
             f'\ri{id}=10'
         )
+        friends_list_purpose.my_followers_q = (
+            friends_list_purpose.my_followers_q + 1
+        )
     else:
         relation = get_relation(data, request_body["user"]["status"])
+        print(relation)
+        user_myfr_if_myfo = relation[1]
+        purpose_myfr_if_myfo = relation[2]
+        relation = relation[0]
         if relation[0] == '00':
             friends_list_user.user_friends = (
                 friends_list_user.user_friends.replace(
@@ -66,14 +77,12 @@ def update_friends(request, id=1):
                     ''
                 )
             )
-            print(friends_list_user.user_friends)
             friends_list_purpose.user_friends = (
                 friends_list_purpose.user_friends.replace(
                     '\r' + f'i{id}=' + str(data)[::-1],
                     ''
                 )
             )
-            print(friends_list_purpose.user_friends)
         else:
             friends_list_user.user_friends = (
                 friends_list_user.user_friends.replace(
@@ -87,6 +96,14 @@ def update_friends(request, id=1):
                     f'i{id}={relation[1]}\r'
                 )
             )
+            if data == '00':
+                pass
+        friends_list_user.my_friends_q += user_myfr_if_myfo[0]
+        friends_list_user.i_following_q += user_myfr_if_myfo[1]
+        friends_list_user.my_followers_q += user_myfr_if_myfo[2]
+        friends_list_purpose.my_friends_q += purpose_myfr_if_myfo[0]
+        friends_list_purpose.i_following_q += purpose_myfr_if_myfo[1]
+        friends_list_purpose.my_followers_q += purpose_myfr_if_myfo[2]
     friends_list_purpose.save()
     friends_list_user.save()
     return Response({
@@ -145,5 +162,23 @@ def is_purpose_user_friend(request, uId, pId):
     return Response({
         "data": {
             "confusing": data_dict
+        }
+    })
+
+
+@api_view(['GET'])
+@permission_classes([])
+def get_user_friend_stats(request, id):
+    try:
+        friends = Friend.objects.get(user_id=id)
+    except Exception:
+        return Response({
+            "response": "User not found"
+        })
+    return Response({
+        "data": {
+            "my_friends": friends.my_friends_q,
+            "i_follow": friends.i_following_q,
+            "my_followers": friends.my_followers_q
         }
     })

@@ -2,7 +2,8 @@ from .views import (
     add_user,
     update_friends,
     get_user_friends,
-    is_purpose_user_friend
+    is_purpose_user_friend,
+    get_user_friend_stats
 )
 from django.urls import path
 
@@ -18,5 +19,10 @@ urlpatterns = [
         'friends/isFriend/<int:pId>/<int:uId>/',
         is_purpose_user_friend,
         name='is_purpose_user_friend'
+    ),
+    path(
+        'friends/stat/<int:id>/',
+        get_user_friend_stats,
+        name='get_user_friend_stats'
     )
 ]

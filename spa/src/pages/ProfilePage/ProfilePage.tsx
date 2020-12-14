@@ -10,7 +10,6 @@ import {Text} from 'components/Text';
 import {APIUser, API_USER} from 'utils/api';
 import {IUserProfile, IUserStore} from 'types/user';
 import {ioIGetDataUser, ioIError} from 'types/common';
-import {IIsFriendStruct} from 'types/friends';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 
 import './profile-page.scss';
@@ -59,10 +58,7 @@ export const ProfilePage: FC<IProfilePageProps> = ({
         <div className={'profile-page'}>
           <div className={'content-wrapper'} >
             <ProfileCard 
-              friendsQuantity={0}
               momentsQuantity={0}
-              subsQuantity={0}
-              mySubsQuantity={0}
               name={userProfile?.user.username}
               photoPath={API_USER + userProfile?.user.profile_image}
               firstName={userProfile?.user.first_name || ''}

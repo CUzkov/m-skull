@@ -6,7 +6,7 @@ import {
 } from 'types/tokens';
 import {IUserAuthData, IUserProfile, IUserId} from 'types/user';
 import {IGetData, IError, ISucces, IChangeUserForm, IRegForm} from 'types/common';
-import {IIsFriendStruct} from 'types/friends';
+import {IIsFriendStruct, IUserFriendsStat} from 'types/friends';
 
 export const API_USER: string = 'http://127.0.0.1:8080';
 const API_FRIEND: string = 'http://127.0.0.1:8082';
@@ -158,5 +158,10 @@ export class APIUser {
 				}
 			});
 		return response;
+	}
+	static getUserFriendStat = async (userId: number):Promise<IGetData<IUserFriendsStat> | IError> => {
+		let response = await fetch(API_FRIEND + `/api/friends/stat/${userId}/`);
+		let responseJSON: Promise<IGetData<IUserFriendsStat> | IError> = response.json();
+		return responseJSON;
 	}
 }

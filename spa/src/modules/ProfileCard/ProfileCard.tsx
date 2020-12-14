@@ -10,15 +10,13 @@ import {IIsFriendStruct} from 'types/friends';
 import {APIUser} from 'utils/api';
 import {IUserStore} from 'types/user';
 import {ioIError} from 'types/common';
+import {IUserFriendsStat} from 'types/friends';
 
 import './profile-card.scss'
 
 interface ProfileCardProps {
 	name: string,
 	photoPath: string,
-	friendsQuantity: number,
-	subsQuantity: number,
-	mySubsQuantity: number,
 	momentsQuantity: number,
 	firstName: string,
 	lastName: string,
@@ -28,16 +26,14 @@ interface ProfileCardProps {
 export const ProfileCard: FC<ProfileCardProps> = ({
 	photoPath,
 	name,
-	friendsQuantity,
 	momentsQuantity,
-	mySubsQuantity,
-	subsQuantity,
 	lastName,
 	firstName,
 	userNumber
 }: ProfileCardProps) => {
 
 	const [isRedProfileSettings, setIsRedProfileSettings] = useState<boolean>(false);
+  const [userFriendsStat, setUserFriendsStat] = useState<IUserFriendsStat>(null);
   const [isFriendStruct, setIsFriendStruct] = useState<IIsFriendStruct>(null);
 	const userStore: IUserStore = useSelector(state => state.user);
 	const dispatch = useDispatch();
@@ -52,11 +48,26 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 					setIsFriendStruct(res.data);
 				}
 			});
+		APIUser.getUserFriendStat(userNumber)
+			.then(res => {
+				console.log('dwadad')
+				if (!ioIError(res)) {
+					setUserFriendsStat(res.data);
+				}
+			})
 	};
 
 	useEffect(() => {
 		if(userNumber) {
 			refesh();
+		} else {
+			APIUser.getUserFriendStat(userStore.id)
+				.then(res => {
+					console.log('dwadad')
+					if (!ioIError(res)) {
+						setUserFriendsStat(res.data);
+					}
+				})
 		}
 	}, []);
 
@@ -100,8 +111,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 					</div>
 					<div className={'statistics F-R-SP'} >
 						<div>{PROFILE_CARD_TEXT.mQuantity + ': ' + momentsQuantity}</div>
-						<div>{PROFILE_CARD_TEXT.msQuantity + ': ' + mySubsQuantity}</div>
-						<div>{PROFILE_CARD_TEXT.fQuantity + ': ' + friendsQuantity}</div>
+						<div>{PROFILE_CARD_TEXT.msQuantity + ': ' + userFriendsStat?.my_followers}</div>
+						<div>{PROFILE_CARD_TEXT.fQuantity + ': ' + userFriendsStat?.my_friends}</div>
+						<div>{PROFILE_CARD_TEXT.sQuantity + ': ' + userFriendsStat?.i_follow}</div>
 					</div>
 					<div>{`${firstName} ${lastName}`}</div>
 					{!userNumber &&
