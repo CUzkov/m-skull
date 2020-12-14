@@ -1,22 +1,44 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+function srcPath(subdir) {
+    return path.join(__dirname, "src", subdir);
+}
+
 module.exports = {
     entry: ["./src/index.tsx", "./src/index.scss"],
     output: {
         filename: "bundle.js",
-        path: path.join(__dirname, "out")
+        path: path.join(__dirname, "out"),
     },
 
     devServer: {
         contentBase: path.join(__dirname, 'out'),
         compress: true,
         hot: true,
-        port: 8080
+        historyApiFallback: true,
+        port: 8000
     },
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
+
+    resolve: {
+        // Add '.ts' and '.tsx' as resolvable extensions.
+        extensions: [".ts", ".tsx", ".js", ".json"],
+        alias: {
+            components: srcPath('components'),
+            app: srcPath('app'),
+            pages: srcPath('pages'),
+            constants: srcPath('constants'),
+            assests: srcPath('assests'),
+            models: srcPath('models'),
+            modules: srcPath('modules'),
+            store: srcPath('store'),
+            utils: srcPath('utils'),
+            types: srcPath('types'),
+        }
+    },
 
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
@@ -45,7 +67,11 @@ module.exports = {
                     "css-loader", // translates CSS into CommonJS
                     "sass-loader" // compiles Sass to CSS, using Node Sass by default
                 ]
-            }
+            },
+            {
+                test: /\.svg$/,
+                use: ['@svgr/webpack'],
+            },
         ]
     },
 
@@ -57,9 +83,4 @@ module.exports = {
             chunkFilename: "[id].css"
         })
     ],
-
-    resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx", ".js", ".json"]
-    }
 };

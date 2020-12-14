@@ -71,7 +71,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django_db_friends',
-        'USER': 'user_name',
+        'USER': 'cuzkov',
         'PASSWORD': 'password',
         'HOST': '127.0.0.1',
         'PORT': '5432',
@@ -117,3 +117,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/friends/'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True

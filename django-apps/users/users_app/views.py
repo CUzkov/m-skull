@@ -17,15 +17,17 @@ import os
 
 User = get_user_model()
 
+
 @api_view(http_method_names=['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def change_user_photo(request):
+    """change user photo"""
     user = User.objects.get(id=request.user.id)
     try:
-        img = dict(request.FILES)["img"]
+        img = dict(request.FILES)["file"][0]
     except KeyError:
         return Response({
-            "response": "bad request"
+            "error": "not file"
         })
     finally:
         old_path = MEDIA_ROOT + user.profile_image.url[7:]
@@ -33,11 +35,12 @@ def change_user_photo(request):
             os.remove(old_path)
         except Exception:
             pass
-        user.profile_image = img[0]
+        user.profile_image = img
         user.save()
         return Response({
-            "response": "success"
+            "success": "success"
         })
+
 
 @api_view(http_method_names=['GET'])
 @permission_classes([IsAdminUser])
@@ -53,7 +56,7 @@ def get_all_users(request):
 
 
 @api_view(http_method_names=['GET'])
-@permission_classes([IsAdminUser, IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def get_me(request):
     """get user that auth"""
     user = User.objects.filter(id=request.user.id)
@@ -73,9 +76,7 @@ def get_user(request, id=1):
     serializers_user = UserSerializer(user, many=True)
     if not serializers_user.data:
         return Response({
-            "data": {
-                "user": {}
-            }
+            "error": "not found"
         })
     return Response({
         "data": {
@@ -88,17 +89,17 @@ def get_user(request, id=1):
 @permission_classes([])
 def create_user(request):
     """create user"""
-    data = dict(request.POST)
-    for entry in data:
-        data[entry] = data[entry][0]
+    data = json.loads(request.body.decode())
     data.update({
         "likes": 0,
         "dislikes": 0,
-        "profile_image": dict(request.FILES).get('photo', None)
+        "profile_image": dict(request.FILES).get('photo', None),
+        "status": ""
     })
     if data["profile_image"] is not None:
         data["profile_image"] = data["profile_image"][0]
     serializes_user = UserSerializer(data=data)
+    print(data)
     if (serializes_user.is_valid(raise_exception=True)):
         response = requests.post(
             url=subscribers_create_user,
@@ -128,7 +129,7 @@ def create_user(request):
 
 
 @api_view(http_method_names=['PUT'])
-@permission_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def update_user(request):
     """update user"""
     try:
@@ -244,4 +245,20 @@ def dislike_by_id(request):
     user_purpose[0].save()
     return Response({
         "response": "success dislike"
+    })
+
+
+@api_view(http_method_names=['GET'])
+@permission_classes([])
+def get_user_id(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except Exception:
+        return Response({
+            "error": "user not found"
+        })
+    return Response({
+        "data": {
+            "id": user.id
+        }
     })

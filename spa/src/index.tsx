@@ -1,11 +1,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {Provider} from 'react-redux';
 
-import { SomeComponent } from "./someComponent";
+import {App} from './App';
+import {store} from './store/store'
 
 window.onload = function() {
-    ReactDOM.render(
-        <SomeComponent compiler="TypeScript" framework="React"/>,
-        document.getElementById("wrapper")
-    );
+  ReactDOM.render(
+    <Provider store={store} >
+      <App />
+    </Provider>,
+    document.getElementById("wrapper")
+  );
 };
