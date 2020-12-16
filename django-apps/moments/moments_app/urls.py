@@ -9,6 +9,7 @@ from .views import (
 )
 from django.urls import path
 
+
 urlpatterns = [
     path('moments/all/', get_all_moments, name='all_posts'),
     path('moments/like/add/', add_like_by_id, name='add_like_by_id'),
@@ -16,5 +17,5 @@ urlpatterns = [
     path('moments/create/', create_moment, name='create_posts'),
     path('moments/user/<int:id>/', get_user_moments, name='user_posts'),
     path('moments/user/tape/<int:id>/', get_user_tape, name='get_user_tape'),
-    path('moments/<int:id>/comment/', add_comment, name='add_comment')
+    path('moments/<int:id>/comment/', add_comment, name='add_comment'),
 ]

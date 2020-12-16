@@ -10,9 +10,9 @@ class Moment(models.Model):
     creation_date = models.DateTimeField(blank=True)
     date_of_update = models.DateTimeField(blank=True)
     likes = models.PositiveIntegerField(default=0)
-    comments_file = models.TextField(blank=True, null=True)
-    liked_users_id_file = models.TextField(blank=True, null=True)
-    tags_id_file = models.TextField(blank=True, null=True)
+    comments = models.TextField(blank=True, default='')
+    liked_users_id = models.TextField(blank=True, default='')
+    tags_id = models.TextField(blank=True, default='')
 
     def __str__(self):
         return str(self.title)
@@ -37,4 +37,4 @@ class Tag(models.Model):
     """tag model class"""
 
     title = models.TextField()
-    moments_id_file = models.TextField(blank=True, null=True)
+    moments_id_file = models.TextField(blank=True, default='')

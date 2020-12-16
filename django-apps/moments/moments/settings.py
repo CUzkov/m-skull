@@ -111,15 +111,20 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = '/static/'
+
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/moments/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = '/home/cuzkov/www.m-skull.ru/moments/static/'
+STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 45,
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.LimitOffsetPagination'
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+APPEND_SLASH = False
