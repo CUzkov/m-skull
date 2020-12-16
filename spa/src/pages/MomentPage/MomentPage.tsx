@@ -15,7 +15,7 @@ export const MomentPage: FC = () => {
 					<div className={'title'} >
 						<Text size={'l'} text={'Автор: ' + MOMENTS[0].author} />
 					</div>
-					{MOMENTS[0].comments.map((comment, index) => (
+					{/* {MOMENTS[0].comments.map((comment, index) => (
 						<Comment 
 							author={comment.author}
 							authorImgPath={comment.authorImgPath}
@@ -25,7 +25,7 @@ export const MomentPage: FC = () => {
 							value={comment.value}
 							key={index}
 						/>
-					))}
+					))} */}
 				</div>
 			</div>
 		</div>

@@ -1,27 +1,43 @@
 import * as React from "react";
-import {FC} from 'react';
-import {Moment} from 'components/Moment';
-import {MOMENTS} from '../../slabs/main'
 import {isMobile} from 'react-device-detect'
+import {FC, useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+
+import {Moment} from 'components/Moment';
+import {IUserStore} from 'types/user';
+import {IMoment} from 'types/moments';
+import {APIUser} from 'utils/api';
+import { ioIError } from "types/common";
 
 import './main-page.scss';
 
 export const MainPage: FC = () => {
 
+	const userStore: IUserStore = useSelector(state => state.user);
+	const [moments, setMoments] = useState<IMoment[]>(null);
+
+	useEffect(() => {
+		APIUser.getUserTape(userStore.id)
+			.then(res => {
+				if (!ioIError(res)) {
+					setMoments(res.results);
+				}
+			})
+	}, []);
+
 	return(
 		<div className={isMobile ? 'main-page-mobile' : 'main-page'}>
 			<div className={'content-wrapper F-C-S'} >
-				{MOMENTS.map((moment, index) => (
-					<div className={'moment-wrapper'} >
+				{moments?.map((moment: IMoment, index: number) => (
+					<div className={'moment-wrapper'} key={index}>
 						<Moment 
-							author={moment.author}
-							authorImgPath={moment.authorImgPath}
-							comments={moment.comments}
-							imgs={moment.imgs}
-							isLiked={moment.isLiked}
-							key={index}
+							author={String(moment.user_id)}
+							// authorImgPath={''}
+							// comments={moment.comments}
+							imgs={moment.image}
+							isLiked={true}
 						/>
-					</div>					
+					</div>
 				))}
 			</div>
 		</div>

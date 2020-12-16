@@ -7,10 +7,12 @@ import {
 import {IUserAuthData, IUserProfile, IUserId} from 'types/user';
 import {IGetData, IError, ISucces, IChangeUserForm, IRegForm} from 'types/common';
 import {IIsFriendStruct, IUserFriendsStat} from 'types/friends';
+import {ICreateMomentSlab} from 'types/moments';
+import {IMoment, IPaginationResponse} from 'types/moments';
 
 export const API_USER: string = 'http://127.0.0.1:8080';
 const API_FRIEND: string = 'http://127.0.0.1:8082';
-const API_MOMENT: string = 'http://127.0.0.1:8081';
+export const API_MOMENT: string = 'http://127.0.0.1:8081';
 
 export class APIUser {
 	static getToken = async (body: IUserAuthData):Promise<ITokens> => {
@@ -162,6 +164,30 @@ export class APIUser {
 	static getUserFriendStat = async (userId: number):Promise<IGetData<IUserFriendsStat> | IError> => {
 		let response = await fetch(API_FRIEND + `/api/friends/stat/${userId}/`);
 		let responseJSON: Promise<IGetData<IUserFriendsStat> | IError> = response.json();
+		return responseJSON;
+	}
+	static createMoment = async (token: string, momentForm: ICreateMomentSlab):Promise<ISucces | IError> => {
+		let formData = new FormData();
+		for (let entry in momentForm) {
+			if (entry == 'img') {
+				for (let i = 0; i < momentForm.img.length; i++) {
+					formData.append(String(i), momentForm.img[i])
+				}
+			} else {	
+				formData.append(entry, momentForm[entry]);
+			}
+		}
+		console.log(momentForm.img[0])
+		let response = await fetch(API_MOMENT + '/api/moments/create/', {
+			method: 'POST',
+			body: formData
+		});
+		let responseJSON: Promise<ISucces | IError> = response.json();
+		return responseJSON;
+	}
+	static getUserTape = async (userId: number):Promise<IPaginationResponse<IMoment> | IError> => {
+		let response = await fetch(API_MOMENT + `/api/moments/user/tape/${userId}/`);
+		let responseJSON: Promise<IPaginationResponse<IMoment> | IError> = response.json();
 		return responseJSON;
 	}
 }

@@ -37,6 +37,7 @@ module.exports = {
             store: srcPath('store'),
             utils: srcPath('utils'),
             types: srcPath('types'),
+            hooks: srcPath('hooks'),
         }
     },
 

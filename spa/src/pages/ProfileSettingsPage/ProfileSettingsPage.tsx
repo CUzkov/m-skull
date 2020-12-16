@@ -169,7 +169,6 @@ export const ProfileSettingsPage: FC = () => {
                               </div>
                             </div>
                           )}
-
                         </Field>
                       ))}
                       <button type="submit">Submit</button>
