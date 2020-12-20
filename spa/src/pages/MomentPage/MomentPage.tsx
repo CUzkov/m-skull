@@ -1,31 +1,80 @@
 import * as React from "react";
-import {FC} from 'react';
-import {MOMENTS} from '../../slabs/main';
-import {Comment} from 'components/Comment';
-import {Text} from 'components/Text'
+import {FC, useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {Link} from 'react-router-dom';
+
+import {APIUser, API_MOMENT, API_USER} from 'utils/api';
+import {IMoment} from 'types/moments';
+import {ioIError} from 'types/common';
+import {IUserProfile, IUserStore} from 'types/user';
+import {useLike} from 'hooks/useLike';
+import LikedIcon from 'assests/moment/icons/liked.svg';
+import UnlikedIcon from 'assests/moment/icons/unliked.svg';
 
 import './moment-page.scss';
 
-export const MomentPage: FC = () => {
+interface IMomentPageProps {
+  match?: any
+}
+
+export const MomentPage: FC<IMomentPageProps> = ({
+  match
+}: IMomentPageProps) => {
+
+	const [moment, setMoment] = useState<IMoment>(null);
+  const userStore: IUserStore = useSelector(state => state.user);
+  const [userProfile, setUserProfile] = useState<IUserProfile>(null);
+	const {isLikedState, toggleLike, setRealLike} = useLike({
+    isLiked: moment?.isLiked,
+    id: match?.params.id
+  });
+
+	useEffect(() => {
+		APIUser.getMomentByIdUserid(match?.params.id, match?.params.userId)
+			.then(res => {
+				if (!ioIError(res)) {
+					setMoment(res.data);
+					setRealLike(res.data.isLiked);
+					APIUser.getUserById(res.data.user_id)
+						.then((res) => {
+							if (!ioIError(res)) {
+								setUserProfile(res.data);
+							}
+						});
+				}
+			})
+	}, [])
+
 	return(
 		<div className={'moment-page'}>
 			<div className={'content-wrapper F-R-SP'} >
-				<img src={MOMENTS[0].imgs[0]} className={'photo'} />
-				<div className={'comments F-C-S'} >
-					<div className={'title'} >
-						<Text size={'l'} text={'Автор: ' + MOMENTS[0].author} />
+				<img src={API_MOMENT + moment?.image[0]} className={'photo'} />
+				<div className={'information F-C-S'}>
+					<div className={'F-R-SP title'}>
+						<div className={'icons'} >
+							{isLikedState ? (
+								<div className={'icon'} onClick={toggleLike} >
+									<LikedIcon />
+								</div> 
+							) : (
+								<div className={'icon'} onClick={toggleLike} >
+									<UnlikedIcon />
+								</div> 
+							)}
+						</div>
+						<Link to={`/profile/${moment?.user_id}`} >
+							<div className={'F-R-S'} >
+								<img src={API_USER + userProfile?.user.profile_image} />
+								<div className={'author'}>{userProfile?.user.username}</div>
+							</div>
+						</Link>
 					</div>
-					{/* {MOMENTS[0].comments.map((comment, index) => (
-						<Comment 
-							author={comment.author}
-							authorImgPath={comment.authorImgPath}
-							isLiked={comment.isLiked}
-							isMaxHeight={true}
-							likesQuantity={comment.likesQuantity}
-							value={comment.value}
-							key={index}
-						/>
-					))} */}
+					<div>
+						<hr/>
+					</div>
+					<div className={'description'}>
+						{moment?.description}
+					</div>
 				</div>
 			</div>
 		</div>

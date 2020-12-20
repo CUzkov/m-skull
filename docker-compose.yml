@@ -7,3 +7,27 @@ services:
   web:
     image: django-spa-nginx
     network_mode: "host"
+  users_db:
+    image: postgres:13.1
+    environment: 
+      - POSTGRES_USER=cuzkov
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=users_db
+    ports: 
+      - 45000:5432
+  moments_db:
+    image: postgres:13.1
+    environment: 
+      - POSTGRES_USER=cuzkov
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=moments_db
+    ports: 
+      - 45001:5432
+  friends_db:
+    image: postgres:13.1
+    environment: 
+      - POSTGRES_USER=cuzkov
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=friends_db
+    ports: 
+      - 45002:5432

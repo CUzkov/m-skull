@@ -13,7 +13,7 @@ from collections import OrderedDict
 
 @api_view(http_method_names=['GET'])
 @permission_classes([])
-def get_all_moments(request):
+def get_all_moments(request, id):
     paginator = PageNumberPagination()
     moments = Moment.objects.all().order_by('id')
     context = paginator.paginate_queryset(moments, request)
@@ -26,9 +26,39 @@ def get_all_moments(request):
         moment['image'] = []
         for img in images:
             moment['image'].append(''.join(img.image.url))
+        if str(id) in moment['liked_users_id']:
+            moment['isLiked'] = True
+        else:
+            moment['isLiked'] = False
         i += 1
         buffer.append(OrderedDict(moment))
-    return paginator.get_paginated_response(buffer)
+    return paginator.get_paginated_response(
+        sorted(buffer, key=lambda x: x['creation_date'])
+    )
+
+
+@api_view(http_method_names=['GET'])
+@permission_classes([])
+def get_moment_by_id(request, id, user_id):
+    try:
+        moments = Moment.objects.get(id=id)
+    except Exception:
+        return Response({
+            "error": "not found"
+        })
+    serializers_moments = MomentSerializer(moments)
+    images = Image.objects.filter(moment=moments)
+    moment = serializers_moments.data
+    moment['image'] = []
+    for img in images:
+        moment['image'].append(''.join(img.image.url))
+    if str(user_id) in moment['liked_users_id']:
+        moment['isLiked'] = True
+    else:
+        moment['isLiked'] = False
+    return Response({
+        "data": moment
+    })
 
 
 @api_view(http_method_names=['GET'])
@@ -46,9 +76,15 @@ def get_user_moments(request, id=1):
         moment['image'] = []
         for img in images:
             moment['image'].append(''.join(img.image.url))
+        if str(id) in moment['liked_users_id']:
+            moment['isLiked'] = True
+        else:
+            moment['isLiked'] = False
         i += 1
-        buffer.append(OrderedDict(moment))
-    return paginator.get_paginated_response(buffer)
+        buffer.append(moment)
+    return paginator.get_paginated_response(
+        sorted(buffer, key=lambda x: x['creation_date'])
+    )
 
 
 @api_view(http_method_names=['POST'])
@@ -119,9 +155,15 @@ def get_user_tape(request, id):
         moment['image'] = []
         for img in images:
             moment['image'].append(''.join(img.image.url))
+        if str(id) in moment['liked_users_id']:
+            moment['isLiked'] = True
+        else:
+            moment['isLiked'] = False
         i += 1
-        buffer.append(OrderedDict(moment))
-    return paginator.get_paginated_response(buffer)
+        buffer.append(moment)
+    return paginator.get_paginated_response(
+        sorted(buffer, key=lambda x: x['creation_date'])
+    )
 
 
 @api_view(http_method_names=['PUT'])
@@ -145,12 +187,13 @@ def add_like_by_id(request):
     else:
         check = False
     if not check:
+        print(moment)
         moment.liked_users_id = (
             moment.liked_users_id +
             f'\ri{data["user_id"]};'
         )
-        moment[0].likes = moment[0].likes + 1
-        moment[0].save()
+        moment.likes = moment.likes + 1
+        moment.save()
         return Response({
             "response": "success liked"
         })
@@ -187,8 +230,8 @@ def del_like_by_id(request):
                 ''
             )
         )
-        moment[0].likes = moment[0].likes - 1
-        moment[0].save()
+        moment.likes = moment.likes - 1
+        moment.save()
         return Response({
             "response": "success disliked"
         })

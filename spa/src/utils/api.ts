@@ -1,3 +1,5 @@
+import {DEBUG} from '../../env'
+
 import {
 	ITokens,
 	IAccess,
@@ -10,13 +12,23 @@ import {IIsFriendStruct, IUserFriendsStat} from 'types/friends';
 import {ICreateMomentSlab} from 'types/moments';
 import {IMoment, IPaginationResponse} from 'types/moments';
 
-export const API_USER: string = 'http://127.0.0.1:8080';
-const API_FRIEND: string = 'http://127.0.0.1:8082';
-export const API_MOMENT: string = 'http://127.0.0.1:8081';
+export let API_USER: string = '';
+let API_FRIEND: string = '';
+export let API_MOMENT: string = '';
+
+if (DEBUG) {
+	API_USER = 'http://127.0.0.1:8080';
+	API_FRIEND = 'http://127.0.0.1:8082';
+	API_MOMENT = 'http://127.0.0.1:8081';
+} else {
+	API_USER = 'http://127.0.0.1:10000';
+	API_FRIEND = 'http://127.0.0.1:10000';
+	API_MOMENT = 'http://127.0.0.1:10000';
+}
 
 export class APIUser {
 	static getToken = async (body: IUserAuthData):Promise<ITokens> => {
-		let response = await fetch(API_USER + '/api/token/', {
+		let response = await fetch(API_USER + '/api/users/token/', {
 			method: 'POST',
 			body: JSON.stringify(body),
 			headers: {
@@ -27,7 +39,7 @@ export class APIUser {
 		return responseJSON;
 	}
 	static getAccessToken = async (token: string):Promise<IAccess | IAccessError> => {
-		let response = await fetch(API_USER + '/api/token/refresh/', {
+		let response = await fetch(API_USER + '/api/users/token/refresh/', {
 			method: 'POST',
 			body: JSON.stringify({
 				'refresh': token,
@@ -187,6 +199,71 @@ export class APIUser {
 	}
 	static getUserTape = async (userId: number):Promise<IPaginationResponse<IMoment> | IError> => {
 		let response = await fetch(API_MOMENT + `/api/moments/user/tape/${userId}/`);
+		let responseJSON: Promise<IPaginationResponse<IMoment> | IError> = response.json();
+		return responseJSON;
+	}
+	static addLike = async (token: string, user: number, moment: number):Promise<ISucces | IError> => {
+		let response = await APIUser.getAccessToken(token)
+			.then( async (accessToken) => {
+				if (ioIAccessError(accessToken)) {
+					if (accessToken.code === 'token_not_valid') {
+						return {
+							error: 'token_not_valid'
+						}
+					}
+				} else {
+					let response = await fetch(API_MOMENT + '/api/moments/like/add/', {
+						method: 'PUT',
+						headers: {
+							'Authorization': 'Bearer ' + accessToken.access
+						},
+						body: JSON.stringify({
+							moment_id: moment,
+							user_id: user
+						})
+					});
+					return response.json();
+				}
+			});
+		return response;
+	}
+	static delLike = async (token: string, user: number, moment: number):Promise<ISucces | IError> => {
+		let response = await APIUser.getAccessToken(token)
+			.then( async (accessToken) => {
+				if (ioIAccessError(accessToken)) {
+					if (accessToken.code === 'token_not_valid') {
+						return {
+							error: 'token_not_valid'
+						}
+					}
+				} else {
+					let response = await fetch(API_MOMENT + '/api/moments/like/del/', {
+						method: 'PUT',
+						headers: {
+							'Authorization': 'Bearer ' + accessToken.access
+						},
+						body: JSON.stringify({
+							moment_id: moment,
+							user_id: user
+						})
+					});
+					return response.json();
+				}
+			});
+		return response;
+	}
+	static getMomentByIdUserid = async (momentId: number, userId: number):Promise<IGetData<IMoment> | IError> => {
+		let response = await fetch(API_MOMENT + `/api/moments/once/${momentId}/${userId}/`);
+		let responseJSON: Promise<IGetData<IMoment> | IError> = response.json();
+		return responseJSON;
+	}
+	static getAllMoments = async (useId: number):Promise<IPaginationResponse<IMoment> | IError> => {
+		let response = await fetch(API_MOMENT + `/api/moments/all/${useId}/`);
+		let responseJSON: Promise<IPaginationResponse<IMoment> | IError> = response.json();
+		return responseJSON;
+	}
+	static getUser = async (useId: number):Promise<IPaginationResponse<IMoment> | IError> => {
+		let response = await fetch(API_MOMENT + `/api/moments/user/${useId}/`);
 		let responseJSON: Promise<IPaginationResponse<IMoment> | IError> = response.json();
 		return responseJSON;
 	}

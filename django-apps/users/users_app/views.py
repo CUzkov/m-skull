@@ -43,7 +43,7 @@ def change_user_photo(request):
 
 
 @api_view(http_method_names=['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([])
 def get_all_users(request):
     """ get all users"""
     users = User.objects.all()

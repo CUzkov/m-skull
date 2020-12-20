@@ -46,7 +46,7 @@ export const App: FC = () => {
           <Route path="/" exact render={() => <MainPage />} />
           <Route path="/recomended" exact render={() => <RecomendedPage />} />
           <Route path="/profile-settings" exact render={() => <ProfileSettingsPage />} />
-          <Route path="/moment" exact render={() => <MomentPage />} />
+          <Route path="/moment/:id/:userId" exact render={(props) => <MomentPage {...props} />} />
           {isOpen && (
             <MomentCreatePopup 
               toggleModal={toggleModal}

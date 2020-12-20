@@ -25,7 +25,8 @@ export interface IMoment {
   comments: string,
   liked_users_id: string,
   tags_id: string,
-  image: string[]
+  image: string[],
+  isLiked: boolean
 }
 
 export interface IPaginationResponse<T> {

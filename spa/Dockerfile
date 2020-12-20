@@ -9,6 +9,7 @@ ADD package.json /app
 ADD package-lock.json /app
 ADD tsconfig.json /app
 ADD webpack.config.js /app
+ADD env.ts /app
 
 RUN npm i
 RUN npm run compile

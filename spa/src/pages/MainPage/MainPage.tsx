@@ -31,11 +31,12 @@ export const MainPage: FC = () => {
 				{moments?.map((moment: IMoment, index: number) => (
 					<div className={'moment-wrapper'} key={index}>
 						<Moment 
-							author={String(moment.user_id)}
-							// authorImgPath={''}
-							// comments={moment.comments}
+							author={moment.user_id}
+							title={moment.title}
 							imgs={moment.image}
-							isLiked={true}
+							isLiked={moment.isLiked}
+							id={moment.id}
+							description={moment.description}
 						/>
 					</div>
 				))}

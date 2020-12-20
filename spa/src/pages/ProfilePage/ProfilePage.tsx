@@ -2,14 +2,13 @@ import * as React from "react";
 import {FC, useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Redirect} from 'react-router-dom';
- 
+
 import {ProfileCard} from 'modules/ProfileCard';
-import {SMALL_MOMENTS} from '../../slabs/recomended';
 import {SmallMoment} from 'components/SmallMoment';
-import {Text} from 'components/Text';
-import {APIUser, API_USER} from 'utils/api';
+import {APIUser, API_USER, API_MOMENT} from 'utils/api';
 import {IUserProfile, IUserStore} from 'types/user';
 import {ioIGetDataUser, ioIError} from 'types/common';
+import {IMoment} from 'types/moments';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 
 import './profile-page.scss';
@@ -26,6 +25,7 @@ export const ProfilePage: FC<IProfilePageProps> = ({
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [isNoFound, setIsNotFound] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const [moments, setMoments] = useState<IMoment[]>(null);
 
   if (!match?.params.id) {
     useEffect(() => {
@@ -51,6 +51,15 @@ export const ProfilePage: FC<IProfilePageProps> = ({
     }, []);
   }
 
+	useEffect(() => {
+		APIUser.getUser(userStore.id)
+			.then(res => {
+				if (!ioIError(res)) {
+					setMoments(res.results);
+				}
+			})
+	}, []);
+
 	return(
     <>
       {!userStore.refreshToken && <Redirect to={'/login'} />}
@@ -66,17 +75,17 @@ export const ProfilePage: FC<IProfilePageProps> = ({
               userNumber={match?.params.id}
             />
             <div className={'line'} />
-            <Text size={'l'} text={!match?.params.id ? 'Ваши публикации: ' : 'Публикации пользователя: '} />
+            <div style={{fontSize: 'var(--text-sm)'}}>
+              {!match?.params.id ? 'Ваши публикации: ' : 'Публикации пользователя: '}
+            </div>
             <div className={'moments F-R-SP'} >
-              {SMALL_MOMENTS.map((moment, index) => (
+              {moments?.map((moment, index) => (
                 <div className={'moment-wrapper'} key={index} >
                   <SmallMoment
-                    commentsQuantity={moment.commentsQuantity}
-                    isManyImg={moment.isManyImg}
-                    likesQuantity={moment.likesQuantity}
-                    path={moment.path}
-                    referense={moment.referense}
-                    alt={moment.alt}
+                    likesQuantity={moment.likes}
+                    path={API_MOMENT + moment.image[0]}
+                    isLiked={moment.isLiked}
+                    id={moment.id}
                   />
                 </div>
               ))}

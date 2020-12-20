@@ -1,8 +1,6 @@
 export type SmallMomentDto = {
 	path: string;
-	alt?: string;
-	referense: string;
+	isLiked: boolean;
 	likesQuantity: number;
-	commentsQuantity: number;
-	isManyImg: boolean;
+	id: number;
 }
