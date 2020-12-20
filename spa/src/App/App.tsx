@@ -5,7 +5,9 @@ import {
   browserHistory
 } from 'react-router-dom';
 import {FC} from 'react'
-import {Header} from '../modules/header'
+import {useDispatch} from 'react-redux';
+
+import {Header} from 'modules/header'
 import {
   LoginPage,
   MainPage,
@@ -13,9 +15,10 @@ import {
   RecomendedPage,
   MomentPage,
   ProfileSettingsPage
-} from '../pages';
-import {useDispatch} from 'react-redux';
+} from 'pages';
 import {setUserAuths} from 'store/actionsCreators/userActionCreator';
+import {useModalWindow} from 'hooks/useModalWindow';
+import {MomentCreatePopup} from 'modules/MomentCreatePopup';
 
 import './app.scss'
 
@@ -30,17 +33,26 @@ export const App: FC = () => {
     }))
   }
 
+  const {toggleModal, isOpen, closeWindow} = useModalWindow();
+
   return(
     <>
 			<Router history={browserHistory} >
-        <Header />
-        <Route path="/login" exact render={() => <LoginPage />} />
-        <Route path="/profile/:id" exact render={(props) => <ProfilePage {...props}/>} />
-        <Route path="/profile" exact render={() => <ProfilePage />} />
-        <Route path="/" exact render={() => <MainPage />} />
-        <Route path="/recomended" exact render={() => <RecomendedPage />} />
-        <Route path="/profile-settings" exact render={() => <ProfileSettingsPage />} />
-        <Route path="/moment" exact render={() => <MomentPage />} />
+        <Header toggleModal={toggleModal} closeWindow={closeWindow} />
+        <div>
+          <Route path="/login" exact render={() => <LoginPage />} />
+          <Route path="/profile/:id" exact render={(props) => <ProfilePage {...props}/>} />
+          <Route path="/profile" exact render={() => <ProfilePage />} />
+          <Route path="/" exact render={() => <MainPage />} />
+          <Route path="/recomended" exact render={() => <RecomendedPage />} />
+          <Route path="/profile-settings" exact render={() => <ProfileSettingsPage />} />
+          <Route path="/moment/:id/:userId" exact render={(props) => <MomentPage {...props} />} />
+          {isOpen && (
+            <MomentCreatePopup 
+              toggleModal={toggleModal}
+            />
+          )}
+        </div>
 			</Router>    
     </>
   );

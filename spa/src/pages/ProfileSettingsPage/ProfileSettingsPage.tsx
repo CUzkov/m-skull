@@ -7,7 +7,6 @@ import {IUserStore, IUserProfile} from 'types/user';
 import {APIUser, API_USER} from 'utils/api';
 import {isMobile} from 'react-device-detect';
 import {SIDE_BAR, PPS_TEXT} from 'constants/profile-settings-page';
-import {Text} from 'components/Text';
 import {ioIGetDataUser, ioIError, IChangeUserForm} from 'types/common';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 import {Form, Field} from 'react-final-form'
@@ -115,10 +114,9 @@ export const ProfileSettingsPage: FC = () => {
                   onClick={setSelectedSideBarElement(index)}
                   className={'text'}
                 >
-                  <Text
-                    size={'l'}
-                    text={element.name}
-                  />
+                  <div style={{fontSize: 'var(--text-sm)'}}>
+                    {element.name}
+                  </div>
                 </div>
               </div>
             ))}
@@ -169,7 +167,6 @@ export const ProfileSettingsPage: FC = () => {
                               </div>
                             </div>
                           )}
-
                         </Field>
                       ))}
                       <button type="submit">Submit</button>

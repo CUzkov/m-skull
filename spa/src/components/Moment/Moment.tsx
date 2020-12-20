@@ -1,55 +1,76 @@
 import * as React from "react";
-import {ReactElement, FC, useState} from 'react';
+import {ReactElement, FC, useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
 import {isMobile} from 'react-device-detect';
-import {MomentDto} from 'models/MomentDto'
-import {Text} from 'components/Text'
-import {Comment} from 'components/Comment'
-import {Link} from 'react-router-dom'
+import {useSelector} from 'react-redux'
+
+import {MomentDto} from 'models/MomentDto';
+import {API_MOMENT, APIUser, API_USER} from 'utils/api';
+import {ioIError} from 'types/common';
+import {IUserProfile, IUserStore} from 'types/user';
+import LikedIcon from 'assests/moment/icons/liked.svg';
+import UnlikedIcon from 'assests/moment/icons/unliked.svg';
+import {useLike} from 'hooks/useLike';
 
 import './moment.scss'
 
 interface MomentProps extends MomentDto {
-
+  
 }
 
 export const Moment: FC<MomentProps> = ({
   author,
-  authorImgPath,
-  comments,
   imgs,
-  isLiked
+  isLiked,
+  title,
+  id,
+  description
 }: MomentProps): ReactElement => {
 
-  const [isLikedState, setIsLikedState] = useState<boolean>(isLiked);
+  const [userProfile, setUserProfile] = useState<IUserProfile>(null);
+  const userStore: IUserStore = useSelector(state => state.user);
+  const {isLikedState, toggleLike} = useLike({
+    isLiked: isLiked,
+    id: id
+  });
+  
+  useEffect(() => {
+    APIUser.getUserById(author)
+      .then((res) => {
+        if (!ioIError(res)) {
+          setUserProfile(res.data);
+        }
+      });
+  }, []);
 
   return(
     <div className={isMobile ? 'moment-mobile' : 'moment'} >
-      <div className={'title F-R-S'} >
-        <img src={authorImgPath} />
-        <Text text={author} size={'l'} />
+      <div className={'F-R-SP title'} >
+        <Link to={`/profile/${author}`} >
+          <div className={'F-R-S'} >
+            <img src={API_USER + userProfile?.user.profile_image} />
+            <div className={'author'}>{userProfile?.user.username}</div>
+          </div>
+        </Link>
+        <div className={'title-text'}>{title}</div>
       </div>
-      <Link to={'/moment'} >
-        {imgs.length == 1 && <img src={imgs[0]} width={600} /> }
-      </Link>
       {/* TODO добавить свайп картинок */}
+      <Link to={`/moment/${id}/${userStore.id}/`} >
+        {imgs.length != 0 && <img src={API_MOMENT + imgs[0]} width={600} /> }
+      </Link>
+      <div className={'description'}>
+        {description}
+      </div>
       <div className={'icons'} >
-
-      </div>
-      <div className={'comments'} >
-        {comments.slice(0, 3).map((comment, index) => (
-          <Comment 
-            author={comment.author}
-            authorImgPath={comment.authorImgPath}
-            isLiked={comment.isLiked}
-            isMaxHeight={false}
-            likesQuantity={comment.likesQuantity}
-            value={comment.value}
-            key={index}
-          />
-        ))}
-      </div>
-      <div className={'add-comment'} >
-
+        {isLikedState ? (
+          <div className={'icon'} onClick={toggleLike} >
+            <LikedIcon />
+          </div> 
+        ) : (
+          <div className={'icon'} onClick={toggleLike} >
+            <UnlikedIcon />
+          </div> 
+        )}
       </div>
     </div>
   );

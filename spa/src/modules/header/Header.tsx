@@ -1,35 +1,49 @@
 import * as React from "react";
-import {FC} from 'react'
-import {Text} from 'components/Text'
-import ProfileIcon from 'assests/header/icons/profile.svg'
-import CompassIcon from 'assests/header/icons/compass.svg'
-import HomeIcon from 'assests/header/icons/home.svg'
-import {Link} from 'react-router-dom'
-import {HEADER_TITLE} from 'constants/header'
+import {FC} from 'react';
+import {Link} from 'react-router-dom';
+
+import ProfileIcon from 'assests/header/icons/profile.svg';
+import CompassIcon from 'assests/header/icons/compass.svg';
+import HomeIcon from 'assests/header/icons/home.svg';
+import PlusIcon from 'assests/header/icons/plus.svg';
+import {HEADER_TITLE} from 'constants/header';
 
 import './header.scss'
 
-export const Header: FC = () => {
+interface HeaderProps {
+	toggleModal: () => void,
+	closeWindow: () => void
+}
 
+export const Header: FC<HeaderProps> = ({
+	toggleModal,
+	closeWindow
+}: HeaderProps) => {
 	return(
 		<>
 			<div className={'Header' + ' F-R-SP'}>
 				<Link to={'/'} >
-					<div className={'title-text'}>{HEADER_TITLE}</div>
+					<div className={'title-text'} onClick={closeWindow} >{HEADER_TITLE}</div>
 				</Link>
 				<div className={'icons F-R-SP'}>
+					<div 
+						onClick={toggleModal}
+						className={'plus'}
+					>
+						<PlusIcon />
+					</div>
 					<Link to={'/'}>
-						<div className={'home'} >
+						<div className={'home'} onClick={closeWindow} >
 							<HomeIcon />
 						</div>
 					</Link>
 					<Link to={'/recomended'} >
-						<div className={'compass'} >
+						<div className={'compass'} onClick={closeWindow} >
 							<CompassIcon />
 						</div>
 					</Link>
 					<Link to={'/profile'} >
-						<div className={'profile'} >
+						<div className={'profile'} onClick={closeWindow} >
 							<ProfileIcon />
 						</div>
 					</Link>

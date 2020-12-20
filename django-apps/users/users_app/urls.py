@@ -17,16 +17,16 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    path('users/all/', get_all_users, name='all_users'),
-    path('users/chPhoto/', change_user_photo, name='change_user_photo'),
-    path('users/exists/<int:id>/', is_user_exists, name='is_user_exists'),
-    path('users/rate/like/', like_by_id, name='like_by_id'),
-    path('users/rate/dislike/', dislike_by_id, name='dislike_by_id'),
-    path('users/me/', get_me, name='me_user'),
-    path('users/<int:id>/', get_user, name='get_user'),
-    path('users/create/', create_user, name='create_user'),
-    path('users/update/', update_user, name='update_user'),
+    path('all/', get_all_users, name='all_users'),
+    path('chPhoto/', change_user_photo, name='change_user_photo'),
+    path('exists/<int:id>/', is_user_exists, name='is_user_exists'),
+    path('rate/like/', like_by_id, name='like_by_id'),
+    path('rate/dislike/', dislike_by_id, name='dislike_by_id'),
+    path('me/', get_me, name='me_user'),
+    path('<int:id>/', get_user, name='get_user'),
+    path('create/', create_user, name='create_user'),
+    path('update/', update_user, name='update_user'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('users/me/<slug:username>/', get_user_id, name='get_me_id'),
+    path('me/<slug:username>/', get_user_id, name='get_me_id'),
 ]

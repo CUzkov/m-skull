@@ -43,7 +43,7 @@ def change_user_photo(request):
 
 
 @api_view(http_method_names=['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([])
 def get_all_users(request):
     """ get all users"""
     users = User.objects.all()
@@ -99,7 +99,6 @@ def create_user(request):
     if data["profile_image"] is not None:
         data["profile_image"] = data["profile_image"][0]
     serializes_user = UserSerializer(data=data)
-    print(data)
     if (serializes_user.is_valid(raise_exception=True)):
         response = requests.post(
             url=subscribers_create_user,

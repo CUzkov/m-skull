@@ -1,9 +1,8 @@
-import {CommentDto} from './CommentDto'
-
 export type MomentDto = {
-	author: string;
-	authorImgPath: string;
+	author: number;
 	isLiked: boolean;
-	comments: CommentDto[];
 	imgs: string[];
+	title: string;
+	id: number;
+	description: string;
 }

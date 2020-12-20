@@ -1,10 +1,13 @@
 import * as React from "react";
-import {ReactElement, useState} from 'react'
-import {FC} from 'react'
+import {ReactElement, useState, FC} from 'react';
+import {useSelector} from 'react-redux';
+import {Link} from 'react-router-dom';
+
 import {SmallMomentDto} from 'models/SmallMomentDto'
 import {isMobile} from 'react-device-detect'
-import CommentIcon from 'assests/small-moment/icons/comment.svg'
-import LikeIcon from 'assests/small-moment/icons/like.svg'
+import LikedIcon from 'assests/moment/icons/liked.svg';
+import UnlikedIcon from 'assests/moment/icons/unliked.svg';
+import {IUserStore} from 'types/user';
 
 import './small-moment.scss'
 
@@ -14,43 +17,40 @@ interface SmallMomentProps extends SmallMomentDto {
 
 export const SmallMoment: FC<SmallMomentProps> = ({
   path,
-  alt,
-  referense,
   likesQuantity,
-  commentsQuantity,
-  isManyImg
+  isLiked,
+  id
 }: SmallMomentProps): ReactElement => {
 
   const [isHover, setIsHover] = useState<boolean>(false);
-
-  console.log('adwawd');
+  const userStore: IUserStore = useSelector(state => state.user);
 
   return(
     <div className={isMobile ? 'small-moment-mobile' : 'small-moment'} >
       <img 
         src={path} 
-        alt={alt} 
         className={'image'} 
         onMouseEnter={() => { setIsHover(true); }} 
         />
       {!isMobile && isHover &&
-        <div 
-          className={'hover-block F-C-C'} 
-          onMouseLeave={() => { setIsHover(false); }}
-          >
-          <div className={'icons F-R-SP'} >
-            <div className={'like F-R-SP'} onClick={() => {}}>
-              <LikeIcon />
-              {likesQuantity}
-            </div>
-            <div className={'comment F-R-SP'} onClick={() => {}} >
-              <CommentIcon />
-              {commentsQuantity}
+        <Link to={`/moment/${id}/${userStore.id}/`} >
+          <div 
+            className={'hover-block F-C-C'} 
+            onMouseLeave={() => { setIsHover(false); }}
+            >
+            <div className={'icons F-R-SP'} >
+              <div className={'like F-R-SP'} >
+                {isLiked ? (
+                  <LikedIcon />
+                ) : (
+                  <UnlikedIcon />
+                )}
+                {likesQuantity}
+              </div>
             </div>
           </div>
-        </div>
+        </Link>
       }
     </div>
   );
-
 }
