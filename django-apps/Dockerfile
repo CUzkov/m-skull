@@ -7,5 +7,8 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
+COPY ./images/unnamed.jpg /home/cuzkov/www.m-skull.ru/users/
+COPY ./images/unnamed.jpg /home/cuzkov/www.m-skull.ru/users/home/cuzkov/www.m-skull.ru/users/unnamed.jpg
+
 
 CMD ["uwsgi", "--emperor", "*/uwsgi.ini"]

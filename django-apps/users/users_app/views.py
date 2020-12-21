@@ -2,7 +2,6 @@
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import (
-    IsAdminUser,
     IsAuthenticatedOrReadOnly,
 )
 from django.contrib.auth import get_user_model
@@ -14,6 +13,7 @@ import requests
 from .apis import subscribers_create_user
 from users.settings import MEDIA_ROOT
 import os
+from django.core.files.images import ImageFile
 
 User = get_user_model()
 
@@ -93,18 +93,20 @@ def create_user(request):
     data.update({
         "likes": 0,
         "dislikes": 0,
-        "profile_image": dict(request.FILES).get('photo', None),
+        "profile_image": ImageFile(open('/home/cuzkov/www.m-skull.ru/users/unnamed.jpg', 'rb')),
         "status": ""
     })
-    if data["profile_image"] is not None:
-        data["profile_image"] = data["profile_image"][0]
     serializes_user = UserSerializer(data=data)
     if (serializes_user.is_valid(raise_exception=True)):
+        if User.objects.last() is not None:
+            buffer_id = User.objects.last().id + 1
+        else:
+            buffer_id = 1
         response = requests.post(
             url=subscribers_create_user,
             json={
                 "user": {
-                    "id": User.objects.last().id + 1
+                    "id": buffer_id
                 }
             }
         )

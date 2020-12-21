@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'moments.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if DEBUG:
+if False:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -126,7 +126,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/moments/'
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/moments/'
 STATIC_ROOT = '/home/cuzkov/www.m-skull.ru/moments/static/'
 STATIC_URL = '/static/'
 
