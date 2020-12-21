@@ -7,9 +7,8 @@ class User(AbstractUser):
 
     birthday = models.DateField(null=True, blank=True)
     profile_image = models.ImageField(
-        null=True,
-        blank=True,
-        upload_to='images/'
+        upload_to='images/',
+        default='/home/cuzkov/www.m-skull.ru/users/unnamed.jpg'
     )
     status = models.CharField(max_length=50, default='', blank=True)
     likes = models.PositiveIntegerField(default=0)

@@ -69,7 +69,7 @@ WSGI_APPLICATION = 'users.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if DEBUG:
+if False:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -124,12 +124,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-STATIC_URL = '/static/'
-
 AUTH_USER_MODEL = 'users_app.User'
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -142,7 +136,7 @@ REST_FRAMEWORK = {
 }
 
 MEDIA_ROOT = '/home/cuzkov/www.m-skull.ru/users/'
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/users/'
 STATIC_ROOT = '/home/cuzkov/www.m-skull.ru/users/static/'
 STATIC_URL = '/static/'
 

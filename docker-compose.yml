@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
   api:
-    image: django-da
+    image: da
     network_mode: "host"
   web:
-    image: django-spa-nginx
+    image: dsn
     network_mode: "host"
   users_db:
     image: postgres:13.1
