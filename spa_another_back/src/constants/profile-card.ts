@@ -1,6 +1,6 @@
 export const PROFILE_CARD_TEXT = {
 	mQuantity: 'Публикации',
 	msQuantity: 'Мои подписчики',
-	sQuantity: 'Я подписан на',
+	sQuantity: 'Подписки',
 	fQuantity: 'Друзья'
 }
