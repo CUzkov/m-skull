@@ -187,7 +187,6 @@ def add_like_by_id(request):
     else:
         check = False
     if not check:
-        print(moment)
         moment.liked_users_id = (
             moment.liked_users_id +
             f'\ri{data["user_id"]};'
