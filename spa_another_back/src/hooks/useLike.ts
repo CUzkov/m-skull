@@ -24,22 +24,22 @@ export const useLike = ({
   const userStore: IUserStore = useSelector(state => state.user);
 
   const toggleLike = useCallback(() => {
-    // setIsLikedState(!isLikedState);
-    // if (isLikedState) {
-    //   APIUser.delLike(userStore.refreshToken, userStore.id, id)
-    //     .then(res => {
-    //       if (ioIError(res)) {
-    //         setIsLikedState(!isLikedState);
-    //       }
-    //     })
-    // } else {
-    //   APIUser.addLike(userStore.refreshToken, userStore.id, id)
-    //   .then(res => {
-    //     if (ioIError(res)) {
-    //       setIsLikedState(!isLikedState);
-    //     }
-    //   })
-    // }
+    setIsLikedState(!isLikedState);
+    if (isLikedState) {
+      APIUser.delLike(userStore.refreshToken, userStore.id, id)
+        .then(res => {
+          if (ioIError(res)) {
+            setIsLikedState(!isLikedState);
+          }
+        })
+    } else {
+      APIUser.addLike(userStore.refreshToken, userStore.id, id)
+      .then(res => {
+        if (ioIError(res)) {
+          setIsLikedState(!isLikedState);
+        }
+      })
+    }
   }, [isLikedState, isLiked, id]);
 
   const setRealLike = useCallback((value: boolean) => {

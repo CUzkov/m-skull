@@ -21,11 +21,11 @@ export interface ISucces {
 }
 
 export interface IChangeUserForm {
-  username?: string;
-  first_name?: string;
-  last_name?: string;
-  status?: string;
-  birthday?: string;
+  nickname?: string;
+  firstname?: string;
+  lastname?: string;
+  photo?: string;
+  id: string;
 }
 
 export interface IRegForm {

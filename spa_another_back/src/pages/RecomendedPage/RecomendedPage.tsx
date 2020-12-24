@@ -6,7 +6,7 @@ import {SmallMoment} from 'components/SmallMoment';
 import {IMoment} from 'types/moments';
 import {ioIError} from 'types/common';
 import {IUserStore} from 'types/user';
-import {APIUser, API_MOMENT} from 'utils/api';
+import {APIUser} from 'utils/api';
 
 import './recomended-page.scss';
 
@@ -16,10 +16,10 @@ export const RecomendedPage: FC = () => {
   const userStore: IUserStore = useSelector(state => state.user);
 
 	useEffect(() => {
-		APIUser.getAllMoments(userStore.id)
+		APIUser.getAllMoments()
 			.then(res => {
 				if (!ioIError(res)) {
-					setMoments(res.results);
+					setMoments(res.data);
 				}
 			})
 	}, []);
@@ -30,10 +30,10 @@ export const RecomendedPage: FC = () => {
 				{moments?.map((moment, index) => (
 					<div className={'moment-wrapper'} key={index} >
 						<SmallMoment
-							likesQuantity={moment.likes}
-							path={API_MOMENT + moment.image[0]}
-							isLiked={moment.isLiked}
-							id={moment.id}
+							likesQuantity={Number(moment.amount_likes)}
+							path={moment.attach}
+							isLiked={(moment.liked_users.indexOf(`i${userStore.id}`) === -1 ? false : true)}
+							id={Number(moment.post_id)}
 						/>
 					</div>
 				))}

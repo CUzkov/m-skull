@@ -4,12 +4,13 @@ import {isMobile} from 'react-device-detect';
 import {Form, Field} from 'react-final-form';
 import {useSelector} from 'react-redux';
 
-import { APIUser } from "utils/api";
-import {ICreateMomentSlab} from 'types/moments';
+import {APIUser} from "utils/api";
+import {ICreateMoment} from 'types/moments';
 import {IUserStore} from 'types/user';
+import {storage} from '../../firebase';
+import {ioIError} from "types/common";
 
 import './moment-create-popup.scss'
-import { ioIError } from "types/common";
 
 interface MomentCreatePopupProps {
   toggleModal: () => void
@@ -21,18 +22,37 @@ export const MomentCreatePopup: FC<MomentCreatePopupProps> = ({
 
   const userStore: IUserStore = useSelector(state => state.user);
   const inputRef = useRef(null);
-  const submitHandler = (values: ICreateMomentSlab, form: any): void => {
+  const submitHandler = (values: ICreateMoment, form: any): void => {
     values.user_id = userStore.id;
-    values.img = inputRef.current.files;
-    APIUser.createMoment('', values)
-      .then(res => {
-        if (!ioIError(res)) {
-          alert("Success")
-        } else {
-          alert("Some error, try again")
+    if (inputRef.current.files[0]) {
+      const uploadTask = storage.ref(`posts/${userStore.id}/${inputRef.current.files[0].name}`).put(inputRef.current.files[0]);
+      const name = inputRef.current.files[0].name;
+      uploadTask.on(
+        "state_changed",
+        snapshot => {},
+        error => {},
+        () => {
+          storage
+            .ref(`posts/${userStore.id}`)
+            .child(name)
+            .getDownloadURL()
+            .then(url => {
+              values.attach = url;
+              APIUser.createMoment('', values)
+                .then(res => {
+                  if (!ioIError(res)) {
+                    alert("Success")
+                  } else {
+                    alert("Some error, try again")
+                  }
+                  toggleModal();
+                });
+            });
         }
-        toggleModal();
-      })
+      );
+    } else {
+      alert('Без картиночки нельзя')
+    }
   }
 
   return(
@@ -45,10 +65,9 @@ export const MomentCreatePopup: FC<MomentCreatePopupProps> = ({
           {props => (
             <form onSubmit={props.handleSubmit} className={'form F-C-SP'} >
               <Field name={'title'} component={'input'} />
-              <Field name={'description'} component={'textarea'} />
+              <Field name={'text'} component={'textarea'} />
               <input
                 type={'file'}
-                multiple
                 ref={inputRef}
               />
               <div className={'F-R-SP'}>

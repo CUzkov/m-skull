@@ -1,37 +1,17 @@
 export interface ICreateMoment {
+  user_id: number;
   title: string;
-  description?: string;
-  user_id: number,
-  tags?: string,
-  img?: string[]
-}
-
-export interface ICreateMomentSlab {
-  title: string;
-  description?: string;
-  user_id: number,
-  // tags?: string,
-  img?: any[]
+  text: string,
+  attach: string;
 }
 
 export interface IMoment {
-  id: number,
-  title: string,
-  description: string,
-  user_id: number,
+  post_id: string,
+  creator_id: string,
   creation_date: string,
-  date_of_update: string,
-  likes: number,
-  comments: string,
-  liked_users_id: string,
-  tags_id: string,
-  image: string[],
-  isLiked: boolean
-}
-
-export interface IPaginationResponse<T> {
-  count: number,
-  next: string | null,
-  previous: string | null,
-  results: T[]
+  title: string,
+  text: string,
+  attach: string,
+  amount_likes: string,
+  liked_users: string
 }

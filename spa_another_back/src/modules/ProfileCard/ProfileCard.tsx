@@ -45,7 +45,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 		APIUser.getIsPurposeUserFriend(userNumber, userStore.id)
 			.then(res => {
 				if (!ioIError(res)) {
-					setIsFriendStruct(res.data);
+					setIsFriendStruct(res);
 				}
 			});
 		APIUser.getUserFriendStat(userNumber)
@@ -69,23 +69,23 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 		}
 	}, []);
 
-	// const onAddFriend = useCallback(() => {
-	// 	APIUser.changeFriends(userStore.refreshToken, 'add', userStore.id, userNumber)
-	// 		.then(res => {
-	// 			if (!ioIError(res)) {
-	// 				refesh();
-	// 			}
-	// 		})
-	// }, []);
+	const onAddFriend = useCallback(() => {
+		APIUser.changeFriends(userStore.refreshToken, 'add', userStore.id, userNumber)
+			.then(res => {
+				if (!ioIError(res)) {
+					refesh();
+				}
+			})
+	}, []);
 
-	// const onDelFriend = useCallback(() => {
-	// 	APIUser.changeFriends(userStore.refreshToken, 'del', userStore.id, userNumber)
-	// 		.then(res => {
-	// 			if (!ioIError(res)) {
-	// 				refesh();
-	// 			}
-	// 		})
-	// }, []);
+	const onDelFriend = useCallback(() => {
+		APIUser.changeFriends(userStore.refreshToken, 'del', userStore.id, userNumber)
+			.then(res => {
+				if (!ioIError(res)) {
+					refesh();
+				}
+			})
+	}, []);
 
 	return(
 		<>
@@ -100,10 +100,10 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 							</div>
 						) : (
 							<>
-								{/* {isFriendStruct?.confusing.isFriends && <button onClick={onDelFriend}>Удалить из друзей</button>}
-								{isFriendStruct?.confusing.isHeSub && <button onClick={onAddFriend}>Принять заявку в друзья</button>}
-								{isFriendStruct?.confusing.isWeSub && <button onClick={onDelFriend}>Отменить заявку в друзья</button>}
-								{isFriendStruct?.confusing.isNotConf && <button onClick={onAddFriend}>Отправить заявку в друзья</button>} */}
+								{isFriendStruct?.isFriends && <button onClick={onDelFriend}>Удалить из друзей</button>}
+								{isFriendStruct?.isHeSub && <button onClick={onAddFriend}>Принять заявку в друзья</button>}
+								{isFriendStruct?.isWeSub && <button onClick={onDelFriend}>Отменить заявку в друзья</button>}
+								{isFriendStruct?.isNotConf && <button onClick={onAddFriend}>Отправить заявку в друзья</button>}
 							</>
 						)}
 					</div>

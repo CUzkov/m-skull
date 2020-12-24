@@ -33,7 +33,7 @@ export const SmallMoment: FC<SmallMomentProps> = ({
         onMouseEnter={() => { setIsHover(true); }} 
         />
       {!isMobile && isHover &&
-        <Link to={`/moment/${id}/${userStore.id}/`} >
+        <Link to={`/moment/${id}/`} >
           <div 
             className={'hover-block F-C-C'} 
             onMouseLeave={() => { setIsHover(false); }}

@@ -5,7 +5,7 @@ import {Redirect} from 'react-router-dom';
 
 import {ProfileCard} from 'modules/ProfileCard';
 import {SmallMoment} from 'components/SmallMoment';
-import {APIUser, API_USER, API_MOMENT} from 'utils/api';
+import {APIUser} from 'utils/api';
 import {IUserProfile, IUserStore} from 'types/user';
 import {ioIError} from 'types/common';
 import {IMoment} from 'types/moments';
@@ -25,7 +25,7 @@ export const ProfilePage: FC<IProfilePageProps> = ({
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [isNoFound, setIsNotFound] = useState<boolean>(false);
   const dispatch = useDispatch();
-  // const [moments, setMoments] = useState<IMoment[]>(null);
+  const [moments, setMoments] = useState<IMoment[]>(null);
 
   if (!match?.params.id) {
     useEffect(() => {
@@ -42,7 +42,7 @@ export const ProfilePage: FC<IProfilePageProps> = ({
       APIUser.getUserById(match?.params.id)
         .then((res) => {
           if (!ioIError(res)) {
-            setUserProfile(res.data);
+            setUserProfile(res);
             setIsNotFound(false);
           } else {
             setIsNotFound(true);
@@ -51,14 +51,14 @@ export const ProfilePage: FC<IProfilePageProps> = ({
     }, []);
   }
 
-	// useEffect(() => {
-	// 	APIUser.getUser(userStore.id)
-	// 		.then(res => {
-	// 			if (!ioIError(res)) {
-	// 				setMoments(res.results);
-	// 			}
-	// 		})
-	// }, []);
+	useEffect(() => {
+		APIUser.getUser(userStore.id)
+			.then(res => {
+				if (!ioIError(res)) {
+					setMoments(res.data);
+				}
+			})
+	}, []);
 
 	return(
     <>
@@ -78,18 +78,18 @@ export const ProfilePage: FC<IProfilePageProps> = ({
             <div style={{fontSize: 'var(--text-sm)'}}>
               {!match?.params.id ? 'Ваши публикации: ' : 'Публикации пользователя: '}
             </div>
-            {/* <div className={'moments F-R-SP'} >
+            <div className={'moments F-R-SP'} >
               {moments?.map((moment, index) => (
                 <div className={'moment-wrapper'} key={index} >
                   <SmallMoment
-                    likesQuantity={moment.likes}
-                    path={API_MOMENT + moment.image[0]}
-                    isLiked={moment.isLiked}
-                    id={moment.id}
+                    likesQuantity={Number(moment.amount_likes)}
+                    path={moment.attach}
+                    isLiked={(moment.liked_users.indexOf(`i${userStore.id}`) === -1 ? false : true)}
+                    id={Number(moment.post_id)}
                   />
                 </div>
               ))}
-            </div> */}
+            </div>
           </div>
         </div>
       )}

@@ -5,7 +5,7 @@ import {isMobile} from 'react-device-detect';
 import {useSelector} from 'react-redux'
 
 import {MomentDto} from 'models/MomentDto';
-import {API_MOMENT, APIUser, API_USER} from 'utils/api';
+import {APIUser} from 'utils/api';
 import {ioIError} from 'types/common';
 import {IUserProfile, IUserStore} from 'types/user';
 import LikedIcon from 'assests/moment/icons/liked.svg';
@@ -38,25 +38,24 @@ export const Moment: FC<MomentProps> = ({
     APIUser.getUserById(author)
       .then((res) => {
         if (!ioIError(res)) {
-          setUserProfile(res.data);
+          setUserProfile(res);
         }
       });
   }, []);
 
   return(
     <div className={isMobile ? 'moment-mobile' : 'moment'} >
-      {/* <div className={'F-R-SP title'} >
+      <div className={'F-R-SP title'} >
         <Link to={`/profile/${author}`} >
           <div className={'F-R-S'} >
-            <img src={API_USER + userProfile?.user.profile_image} />
-            <div className={'author'}>{userProfile?.user.username}</div>
+            <img src={userProfile?.photo} />
+            <div className={'author'}>{userProfile?.nickname}</div>
           </div>
         </Link>
         <div className={'title-text'}>{title}</div>
       </div>
-      TODO добавить свайп картинок
-      <Link to={`/moment/${id}/${userStore.id}/`} >
-        {imgs.length != 0 && <img src={API_MOMENT + imgs[0]} width={600} /> }
+      <Link to={`/moment/${id}/`} >
+        {imgs.length != 0 && <img src={imgs} width={600} /> }
       </Link>
       <div className={'description'}>
         {description}
@@ -71,7 +70,7 @@ export const Moment: FC<MomentProps> = ({
             <UnlikedIcon />
           </div> 
         )}
-      </div> */}
+      </div>
     </div>
   );
 }

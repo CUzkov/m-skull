@@ -7,7 +7,7 @@ import {Moment} from 'components/Moment';
 import {IUserStore} from 'types/user';
 import {IMoment} from 'types/moments';
 import {APIUser} from 'utils/api';
-import { ioIError } from "types/common";
+import {ioIError} from "types/common";
 
 import './main-page.scss';
 
@@ -20,7 +20,7 @@ export const MainPage: FC = () => {
 		APIUser.getUserTape(userStore.id)
 			.then(res => {
 				if (!ioIError(res)) {
-					setMoments(res.results);
+					setMoments(res.data);
 				}
 			})
 	}, []);
@@ -31,12 +31,12 @@ export const MainPage: FC = () => {
 				{moments?.map((moment: IMoment, index: number) => (
 					<div className={'moment-wrapper'} key={index}>
 						<Moment 
-							author={moment.user_id}
+							author={Number(moment.creator_id)}
 							title={moment.title}
-							imgs={moment.image}
-							isLiked={moment.isLiked}
-							id={moment.id}
-							description={moment.description}
+							imgs={moment.attach}
+							isLiked={(moment.liked_users.indexOf(`i${userStore.id}`) === -1 ? false : true)}
+							id={Number(moment.post_id)}
+							description={moment.text}
 						/>
 					</div>
 				))}
