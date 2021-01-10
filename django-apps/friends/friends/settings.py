@@ -14,6 +14,7 @@ SECRET_KEY = '+&(f-z^j8kgo+)fv7_5aqv+1a)8vu4-g)h1o6ssj*$12e-mjh2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+MY_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -67,7 +68,7 @@ WSGI_APPLICATION = 'friends.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if False:
+if MY_DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',

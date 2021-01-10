@@ -1,7 +1,7 @@
-from moments.settings import DEBUG
+from moments.settings import MY_DEBUG
 
 
-if False:
+if MY_DEBUG:
     def get_friends(id):
         return f'http://127.0.0.1:8082/api/friends/{id}/'
 

@@ -1,4 +1,9 @@
-version: '3.7'
+version: '3.1'
+
+volumes:
+  database-users:
+  database-moments:
+  database-friends:
 
 services:
   api:
@@ -15,6 +20,8 @@ services:
       - POSTGRES_DB=users_db
     ports: 
       - 45000:5432
+    volumes:
+      - database-users:/var/lib/postgresql/data/
   moments_db:
     image: postgres:13.1
     environment: 
@@ -23,6 +30,8 @@ services:
       - POSTGRES_DB=moments_db
     ports: 
       - 45001:5432
+    volumes:
+      - database-moments:/var/lib/postgresql/data/
   friends_db:
     image: postgres:13.1
     environment: 
@@ -31,3 +40,5 @@ services:
       - POSTGRES_DB=friends_db
     ports: 
       - 45002:5432
+    volumes:
+      - database-friends:/var/lib/postgresql/data/

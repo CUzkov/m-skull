@@ -4,12 +4,12 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 
 import {ProfileCard} from 'modules/ProfileCard';
-import {SmallMoment} from 'components/SmallMoment';
 import {APIUser, API_USER, API_MOMENT} from 'utils/api';
 import {IUserProfile, IUserStore} from 'types/user';
 import {ioIGetDataUser, ioIError} from 'types/common';
 import {IMoment} from 'types/moments';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
+import { Gallery } from 'components/Gallery';
 
 import './profile-page.scss';
 
@@ -79,16 +79,9 @@ export const ProfilePage: FC<IProfilePageProps> = ({
               {!match?.params.id ? 'Ваши публикации: ' : 'Публикации пользователя: '}
             </div>
             <div className={'moments F-R-SP'} >
-              {moments?.map((moment, index) => (
-                <div className={'moment-wrapper'} key={index} >
-                  <SmallMoment
-                    likesQuantity={moment.likes}
-                    path={API_MOMENT + moment.image[0]}
-                    isLiked={moment.isLiked}
-                    id={moment.id}
-                  />
-                </div>
-              ))}
+              <Gallery 
+                moments={moments}
+              />
             </div>
           </div>
         </div>

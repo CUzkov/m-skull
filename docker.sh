@@ -2,5 +2,9 @@
 
 cd spa
 docker build -t dsn .
-cd ..
+cd ../django-apps
 docker build -t da .
+
+cd ..
+
+docker-compose up

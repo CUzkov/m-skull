@@ -14,6 +14,7 @@ SECRET_KEY = 'cm=i9+3o-j-3d2n@+b!%1c8ujbs+$9*xqrx&50xbgq(g+vh15w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+MY_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -67,7 +68,7 @@ WSGI_APPLICATION = 'moments.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if False:
+if MY_DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',

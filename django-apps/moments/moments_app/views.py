@@ -143,6 +143,7 @@ def get_user_tape(request, id):
             "response": "user not found"
         }, status=500)
     friends_id = list(map(int, response_body['response']['users']))
+    friends_id.append(int(id))
     paginator = PageNumberPagination()
     moments = Moment.objects.filter(user_id__in=friends_id)
     context = paginator.paginate_queryset(moments, request)

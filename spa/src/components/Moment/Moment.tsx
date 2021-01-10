@@ -46,31 +46,24 @@ export const Moment: FC<MomentProps> = ({
   return(
     <div className={isMobile ? 'moment-mobile' : 'moment'} >
       <div className={'F-R-SP title'} >
-        <Link to={`/profile/${author}`} >
-          <div className={'F-R-S'} >
+        <Link to={userStore.id === author ? '/profile' : `/profile/${author}`} >
+          <div className={'F-R-S title-content'} >
             <img src={API_USER + userProfile?.user.profile_image} />
             <div className={'author'}>{userProfile?.user.username}</div>
           </div>
         </Link>
         <div className={'title-text'}>{title}</div>
       </div>
-      {/* TODO добавить свайп картинок */}
       <Link to={`/moment/${id}/${userStore.id}/`} >
-        {imgs.length != 0 && <img src={API_MOMENT + imgs[0]} width={600} /> }
+        {imgs.length != 0 && <img src={API_MOMENT + imgs[0]} width={800} /> }
       </Link>
       <div className={'description'}>
         {description}
       </div>
       <div className={'icons'} >
-        {isLikedState ? (
-          <div className={'icon'} onClick={toggleLike} >
-            <LikedIcon />
-          </div> 
-        ) : (
-          <div className={'icon'} onClick={toggleLike} >
-            <UnlikedIcon />
-          </div> 
-        )}
+        <div className={'icon'} onClick={toggleLike} >
+          {isLikedState ? <LikedIcon /> : <UnlikedIcon />}
+        </div> 
       </div>
     </div>
   );

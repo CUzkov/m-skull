@@ -52,15 +52,9 @@ export const MomentPage: FC<IMomentPageProps> = ({
 				<div className={'information F-C-S'}>
 					<div className={'F-R-SP title'}>
 						<div className={'icons'} >
-							{isLikedState ? (
-								<div className={'icon'} onClick={toggleLike} >
-									<LikedIcon />
-								</div> 
-							) : (
-								<div className={'icon'} onClick={toggleLike} >
-									<UnlikedIcon />
-								</div> 
-							)}
+              <div className={'icon'} onClick={toggleLike} >
+                {isLikedState ? <LikedIcon /> : <UnlikedIcon />}
+              </div> 
 						</div>
 						<Link to={`/profile/${moment?.user_id}`} >
 							<div className={'F-R-S'} >
