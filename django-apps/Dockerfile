@@ -12,4 +12,4 @@ COPY ./images/unnamed.jpg /home/cuzkov/www.m-skull.ru/users/home/cuzkov/www.m-sk
 
 
 # CMD ["uwsgi", "--emperor", "*/uwsgi.ini"]
-CMD ["uwsgi", "--emperor", "*/uwsgi.ini"]
+CMD ["uwsgi", "--emperor", "*/uwsgi-prod.ini"]
