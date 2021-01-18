@@ -9,7 +9,7 @@ if MY_DEBUG:
         return f'http://127.0.0.1:8080/api/users/exists/{id}/'
 else:
     def get_friends(id):
-        return f'http://127.0.0.1:10000/api/friends/{id}/'
+        return f'http://178.154.245.200/api/friends/{id}/'
 
     def get_is_user_exists_url(id):
-        return f'http://127.0.0.1:10000/api/users/exists/{id}/'
+        return f'http://178.154.245.200/api/users/exists/{id}/'
