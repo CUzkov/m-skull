@@ -7,4 +7,4 @@ docker build -t da .
 
 cd ..
 
-docker-compose up
+docker-compose up -d

@@ -21,9 +21,9 @@ if (DEBUG) {
 	API_FRIEND = 'http://127.0.0.1:8082';
 	API_MOMENT = 'http://127.0.0.1:8081';
 } else {
-	API_USER = 'http://127.0.0.1:10000';
-	API_FRIEND = 'http://127.0.0.1:10000';
-	API_MOMENT = 'http://127.0.0.1:10000';
+	API_USER = 'http://127.0.0.1:80';
+	API_FRIEND = 'http://127.0.0.1:80';
+	API_MOMENT = 'http://127.0.0.1:80';
 }
 
 export class APIUser {
