@@ -26,7 +26,8 @@ export interface IUserProfile {
 		status: string,
 		likes: number,
 		dislikes: number,
-		email: string
+		email: string,
+		status_ico: string
 	}
 }
 

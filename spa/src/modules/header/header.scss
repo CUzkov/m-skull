@@ -2,7 +2,7 @@
 	height: var(--header-height);
 	background-color: white;
 	width: 100%;
-	padding: 0px 400px;
+	padding: 0px calc(100vw / 4);
 	box-sizing: border-box;
 	align-items: center;
 	box-shadow: 0 0 15px black;

@@ -26,6 +26,7 @@ export interface IChangeUserForm {
   last_name?: string;
   status?: string;
   birthday?: string;
+  status_ico?: string;
 }
 
 export interface IRegForm {

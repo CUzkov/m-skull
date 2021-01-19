@@ -2,6 +2,7 @@ import * as React from "react";
 import {FC, useState, useEffect, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Redirect} from 'react-router-dom';
+import {Form, Field} from 'react-final-form';
 
 import {IUserStore, IUserProfile} from 'types/user';
 import {APIUser, API_USER} from 'utils/api';
@@ -9,7 +10,7 @@ import {isMobile} from 'react-device-detect';
 import {SIDE_BAR, PPS_TEXT} from 'constants/profile-settings-page';
 import {ioIGetDataUser, ioIError, IChangeUserForm} from 'types/common';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
-import {Form, Field} from 'react-final-form'
+import {statuses} from 'constants/status';
 
 import './profile-settings-page.scss';
 
@@ -74,16 +75,6 @@ export const ProfileSettingsPage: FC = () => {
       default: userProfile?.user.last_name,
       name: 'last_name'
     },
-    {
-      label: 'Изменить статус',
-      default: userProfile?.user.status,
-      name: 'status'
-    },
-    {
-      label: 'Изменить дату рождения',
-      default: userProfile?.user.birthday,
-      name: 'birthday'
-    }
   ];
 
   const onSubmitForm = useCallback((formValues: IChangeUserForm, form: any): void => {
@@ -94,6 +85,19 @@ export const ProfileSettingsPage: FC = () => {
         }
         form.reset();
       });
+  }, []);
+
+  const onClickIcon = useCallback((index: number) => 
+    (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+      APIUser.changeUserData(
+          userStore.refreshToken,
+          {'status_ico': statuses[index]}
+        )
+        .then((res) => {
+          if (!ioIError(res)) {
+            refreshProfile();
+          }
+        });
   }, []);
 
 	return(
@@ -121,7 +125,7 @@ export const ProfileSettingsPage: FC = () => {
               </div>
             ))}
           </div>
-          {sideBarState.entries[0].isSelected && 
+          {sideBarState.entries[1].isSelected && 
             <div className={'content'} >
               <div className={'title F-R-S'} >
                 <img 
@@ -172,6 +176,70 @@ export const ProfileSettingsPage: FC = () => {
                       <button type="submit">Submit</button>
                     </form>
                   </>
+                )}
+              </Form>
+            </div>
+          }
+          {sideBarState.entries[2].isSelected &&
+            <div className={'content'} >
+              <Form onSubmit={onSubmitForm}>
+                {props => (
+                  <form onSubmit={props.handleSubmit}>
+                    <Field name={'email'}>
+                      {props => (
+                        <div className={'ch-input-block'} >
+                          <div className={'ch-input-label'}>
+                            {'Новая почта'}
+                          </div>
+                          <div className={'ch-input-label'}>
+                            <input 
+                              placeholder={userProfile?.user.email}
+                              {...props.input}
+                              type={'email'}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </Field>
+                    <button type="submit">Изменить</button>
+                  </form>
+                )}
+              </Form>
+            </div>
+          }
+          {sideBarState.entries[0].isSelected &&
+            <div className={'content'} >
+              <div className={'icons-table F-R-SP'}>
+                {statuses.map((status, index) => (
+                  <div key={index} >
+                    <img
+                      src={status}
+                      className={userProfile?.user.status_ico === status ? 'active' : ''}
+                      onClick={onClickIcon(index)}
+                    />
+                  </div>
+                ))}
+              </div>
+              <Form onSubmit={onSubmitForm}>
+                {props => (
+                  <form onSubmit={props.handleSubmit}>
+                    <Field name={'status'}>
+                      {props => (
+                        <div className={'ch-input-block'} >
+                          <div className={'ch-input-label'}>
+                            {'Новый статус'}
+                          </div>
+                          <div className={'ch-input-label'}>
+                            <input 
+                              placeholder={userProfile?.user.status}
+                              {...props.input}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </Field>
+                    <button type="submit">Изменить</button>
+                  </form>
                 )}
               </Form>
             </div>

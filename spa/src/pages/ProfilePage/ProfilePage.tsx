@@ -70,6 +70,8 @@ export const ProfilePage: FC<IProfilePageProps> = ({
               firstName={userProfile?.user.first_name || ''}
               lastName={userProfile?.user.last_name || ''}
               userNumber={match?.params.id}
+              status_ico={userProfile?.user.status_ico}
+              status={userProfile?.user.status}
             />
             <div className={'line'} />
             <div style={{fontSize: 'var(--text-sm)'}}>

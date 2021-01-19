@@ -20,7 +20,9 @@ interface ProfileCardProps {
 	momentsQuantity: number,
 	firstName: string,
 	lastName: string,
-	userNumber: number | undefined
+	userNumber: number | undefined,
+	status_ico: string,
+	status: string
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -29,7 +31,9 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 	momentsQuantity,
 	lastName,
 	firstName,
-	userNumber
+	userNumber,
+	status_ico,
+	status
 }: ProfileCardProps) => {
 
 	const [isRedProfileSettings, setIsRedProfileSettings] = useState<boolean>(false);
@@ -96,7 +100,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 				<img src={photoPath} alt=""/>
 				<div className={'content F-C-SP'} >
 					<div className={'F-R-SP'} >
-						<div className={'username'}>{name}</div>
+						<div className={'user-status F-R-S'} >
+              <div className={'username'}>
+                {name}
+              </div>
+              <img src={status_ico} />
+            </div>
 						{!userNumber ? (
 							<div style={{cursor: 'pointer'}} onClick={() => setIsRedProfileSettings(true)} >
 								<SettingsIcon />
@@ -118,7 +127,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 					</div>
 					<div>{`${firstName} ${lastName}`}</div>
 					{!userNumber &&
-						<div className={'F-R-FE'} >
+						<div className={'F-R-SP'} >
+							<div>{'Статус: ' + status}</div>
 							<button onClick={onLogout}>Выйти</button>
 						</div>
 					}
