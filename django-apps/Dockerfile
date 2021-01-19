@@ -10,6 +10,4 @@ COPY . .
 COPY ./images/unnamed.jpg /home/cuzkov/www.m-skull.ru/users/
 COPY ./images/unnamed.jpg /home/cuzkov/www.m-skull.ru/users/home/cuzkov/www.m-skull.ru/users/unnamed.jpg
 
-
-# CMD ["uwsgi", "--emperor", "*/uwsgi.ini"]
 CMD ["uwsgi", "--emperor", "*/uwsgi-prod.ini"]
