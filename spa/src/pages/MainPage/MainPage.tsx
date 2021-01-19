@@ -20,7 +20,7 @@ export const MainPage: FC = () => {
 		APIUser.getUserTape(userStore.id)
 			.then(res => {
 				if (!ioIError(res)) {
-					setMoments(res.results);
+					setMoments(res.results.reverse());
 				}
 			})
 	}, []);
