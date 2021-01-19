@@ -64,6 +64,10 @@ def get_moment_by_id(request, id, user_id):
 @api_view(http_method_names=['GET'])
 @permission_classes([])
 def get_user_moments(request, id=1):
+    if id == -1 or id == 0:
+        return Response({
+            "response": "bad user"
+        }, status=404)
     paginator = PageNumberPagination()
     moments = Moment.objects.filter(user_id=id).order_by('id')
     context = paginator.paginate_queryset(moments, request)
@@ -135,13 +139,17 @@ def create_moment(request):
 @api_view(http_method_names=['GET'])
 @permission_classes([])
 def get_user_tape(request, id):
+    if id == 0 or id == -1:
+        return Response({
+            "response": "user not found"
+        }, status=404)
     response = requests.get(get_friends(id))
     try:
         response_body = json.loads(response.text)
     except JSONDecodeError:
         return Response({
-            "response": "user not found"
-        }, status=500)
+            "response": "bad json"
+        }, status=404)
     friends_id = list(map(int, response_body['response']['users']))
     friends_id.append(int(id))
     paginator = PageNumberPagination()

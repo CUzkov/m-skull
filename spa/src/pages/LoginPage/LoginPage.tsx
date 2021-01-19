@@ -10,6 +10,7 @@ import {setUserAuths} from 'store/actionsCreators/userActionCreator';
 import {LOGIN_PAGE_TEXT} from 'constants/login-page';
 import {IRegForm, ioIRegForm, ioIError} from 'types/common';
 import {IUserAuthData, ioIUserAuthData} from 'types/user';
+import {useClearCred} from 'hooks/useClearCred';
 
 import './login-page.scss';
 
@@ -37,11 +38,15 @@ export const LoginPage: FC = () => {
                     id: res.data.id
                   }));
                   localStorage.setItem('id', String(res.data.id));
+                  setIsRedirectToMain(true);
+                } else {
+                  useClearCred();
                 }
               });
-            setIsRedirectToMain(true);
           } else { alert('Неправильный логин или пароль!') }
         });
+      } else {
+        useClearCred();
       }
     } else {
       if (ioIRegForm(values)) {
@@ -112,8 +117,9 @@ export const LoginPage: FC = () => {
                     <div className={'title'}>{LOGIN_PAGE_TEXT.password}</div>
                     <Field name={'password'}>
                       {props => (
-                        <input 
+                        <input
                           {...props.input}
+                          type={'password'}
                         />
                       )}
                     </Field>
@@ -157,6 +163,7 @@ export const LoginPage: FC = () => {
                       {props => (
                         <input 
                           {...props.input}
+                          type={'password'}
                         />
                       )}
                     </Field>
@@ -167,6 +174,7 @@ export const LoginPage: FC = () => {
                       {props => (
                         <input 
                           {...props.input}
+                          type={'password'}
                         />
                       )}
                     </Field>

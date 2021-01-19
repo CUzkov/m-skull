@@ -7,10 +7,12 @@ import {
 	ioIAccessError
 } from 'types/tokens';
 import {IUserAuthData, IUserProfile, IUserId} from 'types/user';
+import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 import {IGetData, IError, ISucces, IChangeUserForm, IRegForm} from 'types/common';
 import {IIsFriendStruct, IUserFriendsStat} from 'types/friends';
 import {ICreateMomentSlab} from 'types/moments';
 import {IMoment, IPaginationResponse} from 'types/moments';
+import {store} from 'store/store';
 
 export let API_USER: string = '';
 let API_FRIEND: string = '';
@@ -48,6 +50,11 @@ export class APIUser {
 				'Content-Type': 'application/json;charset=utf-8',
 			}
 		});
+		if (!response.ok) {
+			localStorage.clear();
+			store.dispatch(setNoneAuth());
+			history.pushState('', '', '/login');
+		}
 		let responseJSON: Promise<IAccess | IAccessError> = await response.json();
 		return responseJSON;
 	}

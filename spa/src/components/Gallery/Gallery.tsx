@@ -21,27 +21,29 @@ export const Gallery: FC<GalleryProps> = ({
   const galleryRef = useRef(null);
 
   useEffect(() => {
-    const getVal = (elem, style) => { return parseInt(window.getComputedStyle(elem).getPropertyValue(style)); };
-    const getHeight = (item) => { return item.querySelector('.content').getBoundingClientRect().height; };
-    const resizeAll = () => {
-        const altura = getVal(galleryRef.current, 'grid-auto-rows');
-        const gap = getVal(galleryRef.current, 'grid-row-gap');
-        galleryRef.current.querySelectorAll('.gallery-item').forEach(function (item: HTMLDivElement) {
-            var el = item;
-            el.style.gridRowEnd = "span " + Math.ceil((getHeight(item) + gap) / (altura + gap));
-        });
-    };
-    galleryRef.current.querySelectorAll('img').forEach(function (item) {
-        if (!item.complete) {
-          item.addEventListener('load', function () {
-              var altura = getVal(galleryRef.current, 'grid-auto-rows');
-              var gap = getVal(galleryRef.current, 'grid-row-gap');
-              var gitem = item.parentElement.parentElement;
-              gitem.style.gridRowEnd = "span " + Math.ceil((getHeight(gitem) + gap) / (altura + gap));
+    if (moments) {
+      const getVal = (elem, style) => { return parseInt(window.getComputedStyle(elem).getPropertyValue(style)); };
+      const getHeight = (item) => { return item.querySelector('.content').getBoundingClientRect().height; };
+      const resizeAll = () => {
+          const altura = getVal(galleryRef.current, 'grid-auto-rows');
+          const gap = getVal(galleryRef.current, 'grid-row-gap');
+          galleryRef.current.querySelectorAll('.gallery-item').forEach(function (item: HTMLDivElement) {
+              var el = item;
+              el.style.gridRowEnd = "span " + Math.ceil((getHeight(item) + gap) / (altura + gap));
           });
-        }
-    });    
-    resizeAll();
+      };
+      galleryRef.current.querySelectorAll('img').forEach(function (item) {
+          if (!item.complete) {
+            item.addEventListener('load', function () {
+                var altura = getVal(galleryRef.current, 'grid-auto-rows');
+                var gap = getVal(galleryRef.current, 'grid-row-gap');
+                var gitem = item.parentElement.parentElement;
+                gitem.style.gridRowEnd = "span " + Math.ceil((getHeight(gitem) + gap) / (altura + gap));
+            });
+          }
+      });    
+      resizeAll();
+    }
   }, [moments]);
 
   return(

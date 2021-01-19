@@ -1,6 +1,6 @@
 import * as React from "react";
 import {FC, useState, useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 
 import {ProfileCard} from 'modules/ProfileCard';
@@ -8,7 +8,6 @@ import {APIUser, API_USER, API_MOMENT} from 'utils/api';
 import {IUserProfile, IUserStore} from 'types/user';
 import {ioIGetDataUser, ioIError} from 'types/common';
 import {IMoment} from 'types/moments';
-import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 import { Gallery } from 'components/Gallery';
 
 import './profile-page.scss';
@@ -24,46 +23,44 @@ export const ProfilePage: FC<IProfilePageProps> = ({
   const userStore: IUserStore = useSelector(state => state.user);
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [isNoFound, setIsNotFound] = useState<boolean>(false);
-  const dispatch = useDispatch();
   const [moments, setMoments] = useState<IMoment[]>(null);
 
-  if (!match?.params.id) {
-    useEffect(() => {
+  useEffect(() => {
+    let isMounted = true;
+    if (!match?.params.id) {
       APIUser.getMe(userStore.refreshToken).then(res => {
-        if (ioIGetDataUser(res)) {
+        if (ioIGetDataUser(res) && isMounted) {
           setUserProfile(res.data);
-        } else {
-          dispatch(setNoneAuth());
         }
       });
-    }, []);
-  } else {
-    useEffect(() => {
+    } else {
       APIUser.getUserById(match?.params.id)
         .then((res) => {
           if (!ioIError(res)) {
-            setUserProfile(res.data);
-            setIsNotFound(false);
+            if (isMounted) {
+              setUserProfile(res.data);
+              setIsNotFound(false);
+            }
           } else {
-            setIsNotFound(true);
+            if (isMounted) {
+              setIsNotFound(true);
+            }
           }
         });
-    }, []);
-  }
-
-	useEffect(() => {
-		APIUser.getUser(userStore.id)
-			.then(res => {
-				if (!ioIError(res)) {
-					setMoments(res.results);
-				}
-			})
-	}, []);
+    }
+    APIUser.getUser(!match?.params.id ? userStore.id : match?.params.id)
+      .then(res => {
+        if (!ioIError(res) && isMounted) {
+          setMoments(res.results);
+        }
+      });
+    return () => { isMounted = false };
+  }, []);
 
 	return(
     <>
-      {!userStore.refreshToken && <Redirect to={'/login'} />}
-      {!isNoFound && (
+      {!userStore?.refreshToken && <Redirect to={'/login'} />}
+      {!isNoFound ? (
         <div className={'profile-page'}>
           <div className={'content-wrapper'} >
             <ProfileCard 
@@ -85,8 +82,7 @@ export const ProfilePage: FC<IProfilePageProps> = ({
             </div>
           </div>
         </div>
-      )}
-      {isNoFound && (
+      ) : (
         <div>
           Not Found
         </div>

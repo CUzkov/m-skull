@@ -58,17 +58,18 @@ export const ProfileCard: FC<ProfileCardProps> = ({
 	};
 
 	useEffect(() => {
-		if(userNumber) {
+		let isMounted = true;
+		if(userNumber && isMounted) {
 			refesh();
 		} else {
 			APIUser.getUserFriendStat(userStore.id)
 				.then(res => {
-					console.log('dwadad')
-					if (!ioIError(res)) {
+					if (!ioIError(res) && isMounted) {
 						setUserFriendsStat(res.data);
 					}
 				})
 		}
+		return () => { isMounted = false; };
 	}, []);
 
 	const onAddFriend = useCallback(() => {
