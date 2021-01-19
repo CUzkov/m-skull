@@ -56,7 +56,7 @@ export const MomentPage: FC<IMomentPageProps> = ({
                 {isLikedState ? <LikedIcon /> : <UnlikedIcon />}
               </div> 
 						</div>
-						<Link to={`/profile/${moment?.user_id}`} >
+						<Link to={userStore.id === moment?.user_id ? '/profile' : `/profile/${moment?.user_id}`} >
 							<div className={'F-R-S'} >
 								<img src={API_USER + userProfile?.user.profile_image} />
 								<div className={'author'}>{userProfile?.user.username}</div>

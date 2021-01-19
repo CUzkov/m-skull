@@ -6,7 +6,7 @@ import {
 	IAccessError,
 	ioIAccessError
 } from 'types/tokens';
-import {IUserAuthData, IUserProfile, IUserId} from 'types/user';
+import {IUserAuthData, IUserProfile, IUserId, IUserProfileFind} from 'types/user';
 import {setNoneAuth} from 'store/actionsCreators/userActionCreator';
 import {IGetData, IError, ISucces, IChangeUserForm, IRegForm} from 'types/common';
 import {IIsFriendStruct, IUserFriendsStat} from 'types/friends';
@@ -272,6 +272,11 @@ export class APIUser {
 	static getUser = async (useId: number):Promise<IPaginationResponse<IMoment> | IError> => {
 		let response = await fetch(API_MOMENT + `/api/moments/user/${useId}/`);
 		let responseJSON: Promise<IPaginationResponse<IMoment> | IError> = response.json();
+		return responseJSON;
+	}
+	static findFriends = async (username: string):Promise<IGetData<IUserProfileFind[]> | IError> => {
+		let response = await fetch(API_USER + `/api/users/user/${username}/`);
+		let responseJSON: Promise<IGetData<IUserProfileFind[]> | IError> = response.json();
 		return responseJSON;
 	}
 }

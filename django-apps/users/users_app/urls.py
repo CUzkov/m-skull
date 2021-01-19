@@ -8,7 +8,8 @@ from .views import (
     like_by_id,
     dislike_by_id,
     change_user_photo,
-    get_user_id
+    get_user_id,
+    find_user
 )
 from django.urls import path
 from rest_framework_simplejwt.views import (
@@ -29,4 +30,5 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('me/<slug:username>/', get_user_id, name='get_me_id'),
+    path('user/<slug:username>/', find_user, name='find_user'),
 ]

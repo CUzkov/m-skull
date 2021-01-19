@@ -30,6 +30,21 @@ export interface IUserProfile {
 	}
 }
 
+export interface IUserProfileFind {
+	id: string,
+	last_login: string,
+	username: string,
+	first_name: string,
+	last_name: string,
+	date_joined: string,
+	birthday: string | null,
+	profile_image: string | null,
+	status: string,
+	likes: number,
+	dislikes: number,
+	email: string
+}
+
 export interface IUserId {
 	id: number
 }

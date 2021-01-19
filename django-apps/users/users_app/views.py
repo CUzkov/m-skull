@@ -18,6 +18,17 @@ from django.core.files.images import ImageFile
 User = get_user_model()
 
 
+@api_view(http_method_names=['GET'])
+@permission_classes([])
+def find_user(request, username=''):
+    """find users by slug"""
+    users = User.objects.filter(username__startswith=username)
+    serializers_users = UserSerializer(users, many=True)
+    return Response({
+        "data": serializers_users.data
+    })
+
+
 @api_view(http_method_names=['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def change_user_photo(request):
