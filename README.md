@@ -1,7 +1,9 @@
-start apps:
-    cd django-apps
-    uwsgi --emperor "*/uwsgi.ini"
+Веб-приложение социальной сети.
+Структура бэкенда:
+![структура бэка](https://raw.githubusercontent.com/CUzkov/m-skull/main/struct.png)
 
-Для прода:
-    в settings MY_DEBUG = false
-    в spa в env DEBUG False
+Для старта запустить docker.sh и migrate.sh (последнее только один раз)
+
+Для разработки:
+    * в settings MY_DEBUG = false
+    * в spa в env DEBUG False
